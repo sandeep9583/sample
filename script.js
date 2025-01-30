@@ -1,3 +1,4 @@
+// chat
 document.addEventListener('DOMContentLoaded', function () {
             // 1) Capture the text from .page-content.clearfix, but do not display it in chat
             const pageContentDiv = document.querySelector('div.page-content.clearfix');
@@ -361,3 +362,73 @@ Your primary function is to answer user queries helpfully, professionally, polit
                 toggleButton.click();
             }
         });
+
+
+
+
+// music
+document.addEventListener("DOMContentLoaded", function() {
+      // 1. Find the container and the reference (Settings link)
+      const linksContainer = document.querySelector(".links.text-center");
+      const settingsLink = document.querySelector('a[data-shortcut="settings_view"]');
+      
+      // 2. Create the Music button (a tag) entirely via JavaScript
+      const musicLink = document.createElement("a");
+      musicLink.href = "#";
+      musicLink.id = "musicButton";
+      musicLink.setAttribute("data-shortcut", "music_toggle");
+      // Insert the SVG icon + text
+      musicLink.innerHTML = `
+        <svg class="svg-icon" data-icon="music" role="presentation"
+             xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 24 24">
+          <path d="M9 19V5l12-2v14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"></path>
+          <circle cx="6" cy="18" r="3" fill="currentColor"></circle>
+          <circle cx="18" cy="16" r="3" fill="currentColor"></circle>
+        </svg>
+        Music
+      `;
+      
+      // 3. Insert the Music button just before the Settings link
+      linksContainer.insertBefore(musicLink, settingsLink);
+
+      // 4. Create a hidden audio element with a sample MP3 URL
+      const audioElement = document.createElement("audio");
+      audioElement.id = "bgMusic";
+      audioElement.loop = true;
+
+      const sourceElement = document.createElement("source");
+      // You can replace this URL with your own music file
+      sourceElement.src = "https://drive.google.com/file/d/12sn04xiTUs2MIvTuV-7RwvjDIVIqszNI/preview";
+      sourceElement.type = "audio/mpeg";
+
+      audioElement.appendChild(sourceElement);
+      document.body.appendChild(audioElement);
+
+      // 5. Retrieve existing music state from sessionStorage or default to 'stopped'
+      let musicState = sessionStorage.getItem('musicState') || 'stopped';
+      
+      // 6. If previous state was 'playing', start music on page load
+      if (musicState === 'playing') {
+        audioElement.play().catch(err => console.log(err));
+      }
+
+      // 7. Add click event to toggle music on/off
+      musicLink.addEventListener("click", function(event) {
+        event.preventDefault();
+        if (musicState === 'playing') {
+          // Pause music
+          audioElement.pause();
+          musicState = 'stopped';
+          sessionStorage.setItem('musicState', 'stopped');
+        } else {
+          // Play music
+          audioElement.play().catch(err => console.log(err));
+          musicState = 'playing';
+          sessionStorage.setItem('musicState', 'playing');
+        }
+      });
+    });
