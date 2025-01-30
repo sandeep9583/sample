@@ -432,3 +432,239 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       });
     });
+
+
+// summary
+
+ document.addEventListener('DOMContentLoaded', () => {
+      /********************************************************
+       * 1) Dynamically create and insert the Info button next to heading
+       ********************************************************/
+      const heading = document.getElementById('bkmrk-page-title');
+      const infoButton = document.createElement('button');
+      infoButton.className = 'info-button';
+      infoButton.id = 'info-button';
+      infoButton.setAttribute('aria-label', 'Information');
+      infoButton.textContent = 'ⓘ';
+
+      // Insert the info button right after the heading
+      heading.insertAdjacentElement('afterend', infoButton);
+
+      /********************************************************
+       * 2) Dynamically create and insert the Overlay
+       ********************************************************/
+      const overlayHTML = `
+        <div class="overlay-header">
+          <strong>AI Summary</strong>
+          <div>
+            <button class="copy-button" id="copy-button">Copy</button>
+            <button class="close-button" id="close-button">Close</button>
+          </div>
+        </div>
+        <div class="markdown-content" id="markdown-content"></div>
+      `;
+      const overlay = document.createElement('div');
+      overlay.className = 'overlay';
+      overlay.id = 'overlay';
+      overlay.innerHTML = overlayHTML;
+
+      // Insert the overlay at the end of the body
+      document.body.appendChild(overlay);
+
+      /********************************************************
+       * 3) Set up references for newly created elements
+       ********************************************************/
+      const closeButton = document.getElementById('close-button');
+      const copyButton = document.getElementById('copy-button');
+      const markdownContent = document.getElementById('markdown-content');
+      // const contentText = document.getElementById('content-text').innerText.trim();
+
+      // 1) Capture the text from .page-content.clearfix, but do not display it in chat
+      const pageContentDiv = document.querySelector('div.page-content.clearfix');
+      let hiddenContext = '';
+      if (pageContentDiv) {
+        hiddenContext = pageContentDiv.innerText; 
+        console.log('Captured Page Content (hidden):', hiddenContext);
+      }
+
+      /********************************************************
+       * 4) Utility functions
+       ********************************************************/
+      // Toggle overlay visibility
+      function toggleOverlay(show) {
+        if (show) {
+          overlay.classList.add('show', 'fade-in');
+        } else {
+          overlay.classList.remove('show', 'fade-in');
+        }
+      }
+
+      // Copy overlay content
+      function copyOverlayContent() {
+        const textToCopy = markdownContent.innerText;
+        navigator.clipboard.writeText(textToCopy)
+          .then(() => {
+            alert("Copied to clipboard!");
+          })
+          .catch(() => {
+            alert("Failed to copy!");
+          });
+      }
+
+      /********************************************************
+       * 5) Info button click event: fetch from GROQ & stream
+       ********************************************************/
+      infoButton.addEventListener('click', async () => {
+        toggleOverlay(true);
+
+        // Clear any previous content
+        markdownContent.innerHTML = '';
+        let resultText = '';
+
+        // Prepare your custom prompt based on the body text
+     const customPrompt = `
+        Given the following text:
+        "${hiddenContext}"
+
+        For students needing a quick revision of this topic, create a **memorable, concise** acronym or mnemonic highlighting the **essential concepts**.
+
+        Present your answer **strictly** in Markdown format, ensuring the formatting is clean and does not break.
+
+        **Acronym/Mnemonic:** [Your Acronym/Mnemonic here]
+
+        **Explanation:**
+
+        * **[Letter/Part 1]:**  Key idea: [Core concept concisely explained]. *Example:* [Very short, practical illustration].
+        * **[Letter/Part 2]:**  Key idea: [Core concept concisely explained]. *Example:* [Very short, practical illustration].
+        * ... and so on. *Keep explanations and examples ultra-brief for quick recall.*
+
+        **Quick Summary:**
+        [A concise paragraph summarizing the main takeaways. Ensure appropriate new lines are used for readability where needed, but avoid unnecessary filler.]
+        `;
+
+        try {
+          const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer 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'
+            },
+            body: JSON.stringify({
+              "messages": [
+                {
+                  "role": "user",
+                  "content": customPrompt
+                }
+              ],
+              "model": "llama-3.3-70b-specdec",
+              "temperature": 1,
+              "max_tokens": 1024,
+              "top_p": 1,
+              "stream": true
+            })
+          });
+
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+
+          // SSE-like streaming loop
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+              if (!line.trim() || !line.startsWith('data: ')) continue;
+              if (line.includes('[DONE]')) break;
+
+              try {
+                const jsonStr = line.substring('data: '.length).trim();
+                const json = JSON.parse(jsonStr);
+
+                // If there's text content in choices, append it
+                if (json.choices && json.choices[0] && json.choices[0].delta) {
+                  const contentPart = json.choices[0].delta.content;
+                  if (contentPart) {
+                    resultText += contentPart;
+                    // Render on the fly
+                    markdownContent.innerHTML = marked.parse(resultText);
+                  }
+                }
+              } catch (e) {
+                console.error("JSON parse error", e, line);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          markdownContent.innerHTML = '<p style="color:red;">Error fetching data.</p>';
+        }
+      });
+
+      /********************************************************
+       * 6) Close & Copy button events
+       ********************************************************/
+      closeButton.addEventListener('click', () => {
+        toggleOverlay(false);
+      });
+
+      copyButton.addEventListener('click', copyOverlayContent);
+    });
+
+
+// math
+
+ window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                 displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                 macros: {
+                    'R': '\\mathbb{R}',
+                    'N': '\\mathbb{N}',
+                     'v': '\\mathbf{v}',
+                     'abs': ['\\left|#1\\right|', 1],
+                     'norm': ['\\left\\| #1 \\right\\|', 1]
+                },
+            },
+        };
+
+// Convert the given "file" instance to HTML and insert the results
+    // into the given TinyMCE "editor" instance.
+    function convertAndInsertDocx(editor, file) {
+        // Use a FileReader to handle conversion via an ArrayBuffer
+        const reader = new FileReader();
+        reader.onload = async function(loadEvent) {
+            // Get and convert the ArrayBuffer version of the file
+            const arrayBuffer = loadEvent.target.result;
+            const {value: html, messages} = await window.mammoth.convertToHtml({arrayBuffer});
+            // If warnings exists from conversion, log them to the browser console then
+            // show a warning alert via BookStack's event system.
+            if (messages.length > 0) {
+                console.error(messages);
+                window.$events.emit('warning', `${messages.length} warnings logged to browser console during conversion`);
+            }
+            // Insert the resulting HTML content insert the editor
+            editor.insertContent(html);
+        }
+        reader.readAsArrayBuffer(file);
+    }
+
+    // Listen to BookStack emmitted WYSWIYG editor setup event
+    window.addEventListener('editor-tinymce::setup', event => {
+        // Get a reference to the editor and listen to file "drop" events
+        const editor = event.detail.editor;
+        editor.on('drop', event => {
+            // For each of the files in the drop event, pass them, alonside the editor instance
+            // to our "convertAndInsertDocx" function above if they're docx files.
+            const files = event?.dataTransfer?.files || [];
+            for (const file of files) {
+                if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' && window.mammoth) {
+                    convertAndInsertDocx(editor, file);
+                }
+            }
+        });
+    });
+
+
