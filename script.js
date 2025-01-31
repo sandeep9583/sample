@@ -470,6 +470,7 @@ document.addEventListener("DOMContentLoaded", function() {
        ********************************************************/
       const overlayHTML = `
         <div class="overlay-header">
+        <img src="https://img.icons8.com/?size=100&amp;id=59023&amp;format=png&amp;color=000000" class="avatar" style="margin-right: 10px; width: 24px; height: 24px;">
           <strong>AI Summary</strong>
           <div>
             <button class="copy-button" id="copy-button">Copy</button>
