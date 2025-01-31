@@ -447,8 +447,8 @@ document.addEventListener("DOMContentLoaded", function() {
       infoButton.setAttribute('aria-label', 'Information');
       infoButton.textContent = 'ⓘ';
 
-      // Insert the info button right after the heading
-      heading.insertAdjacentElement('beforeend', infoButton);
+      // Append the info button inside the heading at the end
+      heading.appendChild( infoButton);
 
       /********************************************************
        * 2) Dynamically create and insert the Overlay
