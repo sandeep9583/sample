@@ -448,7 +448,7 @@ document.addEventListener("DOMContentLoaded", function() {
       infoButton.textContent = 'ⓘ';
 
       // Insert the info button right after the heading
-      heading.insertAdjacentElement('afterend', infoButton);
+      heading.insertAdjacentElement('beforeend', infoButton);
 
       /********************************************************
        * 2) Dynamically create and insert the Overlay
