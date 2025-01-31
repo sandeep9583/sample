@@ -1,483 +1,188 @@
-/* General enhancements for both light and dark mode */
+:root {
+    /* Light Mode Colors */
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F0F0F0;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --accent-color: #007BFF;
+    --accent-hover: #005BB5;
+    --message-user-bg: #CCE8FE;
+    --message-assistant-bg: #F7F7F8;
+    --border-color: #E0E0E0;
+    
+    /* Dark Mode Colors */
+    --dark-bg-primary: #121212;
+    --dark-bg-secondary: #1E1E1E;
+    --dark-text-primary: #FFFFFF;
+    --dark-text-secondary: #B0B0B0;
+    --dark-accent-color: #3B82F6;
+    --dark-accent-hover: #2563EB;
+    --dark-message-user-bg: #2C3E50;
+    --dark-message-assistant-bg: #2A2A2A;
+    --dark-border-color: #333333;
+}
+
+/* Smooth Transitions */
+* {
+    transition: 
+        background-color 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+/* Light Mode (Default) */
 body {
-    transition: background-color 0.3s ease; /* Smooth background transition for body if needed */
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
 }
 
-/* Chat */
-.assistant-message-container,
-.user-message-container {
-    font-size: 14px !important; /* Slightly increased font size for better readability */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth background and transform transitions */
+/* Dark Mode */
+body.dark-mode {
+    background-color: var(--dark-bg-primary);
+    color: var(--dark-text-primary);
 }
 
-/* Dark Mode Styles */
-.dark-mode body {
-    background-color: #121212; /* Darker background for the whole page in dark mode */
-    color: #e0e0e0;         /* Lighter text color for better contrast in dark mode */
+/* Chat Wrapper */
+.chat-wrapper {
+    background-color: var(--bg-primary);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
 }
 
-.dark-mode .user-message-container {
-    background-color: #292929; /* Darker shade for user messages */
-    color: #fff; /* White text for user messages in dark mode */
+.dark-mode .chat-wrapper {
+    background-color: var(--dark-bg-primary);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-.dark-mode .assistant-message-container {
-    background-color: #383838; /* Slightly lighter shade for assistant messages, creating visual distinction */
-    color: #fff; /* White text for assistant messages in dark mode */
-}
-
-.dark-mode .input-message {
-    color: #fff; /* White text in input in dark mode */
-}
-
-.dark-mode .chat-history {
-    background-color: #1e1e1e; /* Darker background for chat history */
-}
-
-.dark-mode .right-section {
-    background-color: #1e1e1e; /* Darker background for the right section */
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); /* Subtle white shadow in dark mode */
+/* Chat Header */
+.chat-header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .dark-mode .chat-header {
-    background-color: #292929; /* Darker header */
-    border-bottom: 1px solid #333; /* Add a subtle border to the header */
+    background-color: var(--dark-bg-secondary);
+    border-bottom: 1px solid var(--dark-border-color);
+}
+
+/* Chat History */
+.chat-history {
+    background-color: var(--bg-primary);
+}
+
+.dark-mode .chat-history {
+    background-color: var(--dark-bg-primary);
+}
+
+/* Message Containers */
+.user-message-container {
+    background-color: var(--message-user-bg);
+    color: var(--text-primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .user-message-container {
+    background-color: var(--dark-message-user-bg);
+    color: var(--dark-text-primary);
+}
+
+.assistant-message-container {
+    background-color: var(--message-assistant-bg);
+    color: var(--text-primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .assistant-message-container {
+    background-color: var(--dark-message-assistant-bg);
+    color: var(--dark-text-primary);
+}
+
+/* Input Container */
+.input-container {
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
 }
 
 .dark-mode .input-container {
-    background-color: #292929; /* Darker input container */
-    border-top: 1px solid #333; /* Darker border for input container */
+    background-color: var(--dark-bg-secondary);
+    border-top: 1px solid var(--dark-border-color);
 }
 
-.dark-mode .btn-hive-chat,
-.dark-mode .btn-send,
-.dark-mode .btn-close {
-    background-color: #333; /* Slightly lighter buttons in dark mode */
-    color: #f0f0f0;         /* Lighter text for buttons in dark mode */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth button transitions */
+/* Buttons */
+.btn-send, .btn-close, .btn-hive-chat {
+    background-color: var(--accent-color);
+    color: white;
+    transition: all 0.3s ease;
 }
 
-.dark-mode .btn-hive-chat:hover,
-.dark-mode .btn-send:hover,
-.dark-mode .btn-close:hover {
-    background-color: #555; /* Darker hover effect for buttons in dark mode */
-    color: #fff;
+.btn-send:hover, .btn-close:hover, .btn-hive-chat:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.dark-mode .resizable-divider {
-    background-color: #555; /* Darker divider in dark mode */
+.dark-mode .btn-send, 
+.dark-mode .btn-close, 
+.dark-mode .btn-hive-chat {
+    background-color: var(--dark-accent-color);
 }
 
-/* Light Mode Enhancements (Default) */
-.chat-wrapper {
-    background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white for a softer look */
-    backdrop-filter: blur(5px); /* Optional: Apply a subtle blur to the background */
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* More pronounced shadow for depth */
-    transition: all 0.4s ease-out; /* Smooth transition for chat wrapper appearance */
+.dark-mode .btn-send:hover, 
+.dark-mode .btn-close:hover, 
+.dark-mode .btn-hive-chat:hover {
+    background-color: var(--dark-accent-hover);
 }
 
-.right-section {
-    background-color: #f9f9f9; /* Lighter background for right section */
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.08); /* Subtle shadow for right section */
-    border-radius: 8px 0 0 8px; /* Rounded corners on the left side of right section */
-    overflow: hidden; /* Clip any overflowing content due to rounded corners */
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.chat-header {
-    background-color: #f9f9f9; /* Consistent header background */
-    border-bottom: 1px solid #eee; /* Lighter border for header */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
-.chat-history {
-    background-color: #fff; /* White background for chat history */
-    padding: 20px; /* Slightly more padding for better spacing */
-    border-radius: 0 0 0 8px; /* Rounded bottom left corner to match right-section */
-}
-
+.user-message-container, 
 .assistant-message-container {
-    background-color: #f0f0f0; /* Softer gray for assistant messages */
-    border-radius: 12px 12px 12px 4px; /* More rounded corners, slightly different for visual appeal */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Subtle shadow for messages */
+    animation: fadeIn 0.4s ease forwards;
 }
 
-.user-message-container {
-    background-color: #e1f5fe; /* Lighter blue for user messages */
-    border-radius: 12px 12px 4px 12px; /* More rounded corners, slightly different for visual appeal */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Subtle shadow for messages */
-}
-
-.input-container {
-    background-color: #fff; /* White input container */
-    border-top: 1px solid #eee; /* Lighter border for input container */
-    padding: 10px 8px; /* Adjust padding in input container */
-    border-radius: 0 0 0 8px; /* Rounded bottom left corner to match right-section */
-}
-
-.input-message {
-    padding: 10px; /* Slightly more padding in input */
-    border-radius: 6px; /* Rounded corners for input field itself */
-    background-color: #f5f5f5; /* Very light gray background for input field */
-}
-
-.btn-send,
-.btn-close,
 .btn-hive-chat {
-    background-color: #2196F3; /* Brighter blue for buttons */
-    color: #fff;             /* White text for buttons */
-    border-radius: 20px;     /* More rounded buttons */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth button transitions */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Subtle shadow for buttons */
+    animation: pulse 2s infinite;
 }
 
-.btn-send:hover,
-.btn-close:hover,
-.btn-hive-chat:hover {
-    background-color: #1976D2; /* Darker blue on hover */
-    transform: translateY(-1px); /* Slight lift on hover for interactivity */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* More pronounced shadow on hover */
+/* Scrollbar Styling */
+.chat-history::-webkit-scrollbar {
+    width: 8px;
 }
 
-.btn-close {
-    background-color: #e57373; /* Reddish close button */
+.chat-history::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
 }
 
-.btn-close:hover {
-    background-color: #d32f2f; /* Darker red on close button hover */
+.dark-mode .chat-history::-webkit-scrollbar-track {
+    background: var(--dark-bg-secondary);
 }
 
-/* Avatar styling */
-.avatar {
-    width: 35px; /* Slightly larger avatars */
-    height: 35px;
-    border-radius: 50%;
-    margin-right: 12px; /* Adjusted margin */
-    vertical-align: middle;
-    transition: transform 0.2s ease; /* Smooth avatar transform */
+.chat-history::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color);
+    border-radius: 4px;
 }
 
-.avatar:hover {
-    transform: scale(1.1); /* Slight scale up on hover for avatars */
+.dark-mode .chat-history::-webkit-scrollbar-thumb {
+    background-color: var(--dark-accent-color);
 }
 
-/* Hive chat toggle button (floating button) */
-.btn-hive-chat {
-    position: fixed;
-    bottom: 30px; /* Adjusted position */
-    right: 30px;  /* Adjusted position */
-    width: 120px; /* Slightly wider button */
-    height: 45px; /* Slightly taller button */
-    border-radius: 25px; /* More rounded button */
-    border: none;
-    background-color: #2196F3; /* Consistent button color */
-    color: #fff;
-    cursor: pointer;
-    z-index: 1000;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* More modern font */
-    font-weight: 500; /* Slightly bolder font weight */
-    animation: pulseAnimation 2s infinite ease-in-out; /* Replaced scaleAnimation with pulseAnimation */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* More prominent shadow for floating button */
-}
-
-.btn-hive-chat:hover {
-    background-color: #1976D2; /* Darker blue on hover */
-    transform: scale(1.05); /* Slight scale up on hover */
-}
-
-@keyframes pulseAnimation {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.05);
-        opacity: 0.9;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-/* Main chat wrapper */
-.chat-wrapper {
-    display: flex;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1001;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* More modern font */
-    background-color: white;
-    opacity: 0; /* Initially hidden */
-    visibility: hidden; /* Initially hidden */
-    transform: translateY(20px); /* Slide down animation from top */
-    transition: opacity 0.4s ease-out, visibility 0.4s ease-out, transform 0.4s ease-out; /* Smooth appearance transition */
-}
-
-.chat-wrapper.show-chat {
-    opacity: 1; /* Fade in when shown */
-    visibility: visible; /* Make visible when shown */
-    transform: translateY(0); /* Slide into view */
-}
-
-/* Left section (original page content) */
-.left-section {
-    flex: 2;
-    overflow: auto;
-}
-
-/* Divider between left and right sections */
-.resizable-divider {
-    width: 6px; /* Slightly wider divider */
-    cursor: col-resize;
-    background-color: #ddd; /* Lighter divider color */
-    transition: background-color 0.3s ease; /* Smooth divider color transition */
-}
-
-.resizable-divider:hover {
-    background-color: #ccc; /* Slightly darker on hover */
-}
-
-/* Right section (chat UI) */
-.right-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    min-width: 320px; /* Slightly wider min-width */
-    background-color: #F0F0F0;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Header bar at the top of the chat */
-.chat-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #F0F0F0;
-    padding: 12px 20px; /* Adjusted padding */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* More modern font */
-    margin-bottom: 10px; /* Adjusted margin */
-}
-
-.chat-header-title {
-    font-size: 20px; /* Slightly larger title */
-    font-weight: 600; /* Bolder title */
-    margin: 0;
-    color: #333; /* Darker title color */
-}
-
-/* Close button in chat */
-.btn-close {
-    width: 30px; /* Slightly larger close button */
-    height: 30px;
-    border: none;
-    background-color: #ef5350; /* Red color for close button */
-    color: #fff;
-    cursor: pointer;
-    border-radius: 50%;
-    font-family: Arial, sans-serif;
-    font-size: 16px; /* Slightly larger font size for close button */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition for close button */
-}
-
-.btn-close:hover {
-    background-color: #e53935; /* Darker red on hover */
-    transform: scale(1.1); /* Slight scale up on hover */
-}
-
-/* Chat history container */
-.chat-history {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    padding: 20px; /* Adjusted padding */
-    background-color: #FFFFFF;
-    scroll-behavior: smooth; /* Smooth scrolling for new messages */
-}
-
-/* Assistant message bubble */
-.assistant-message-container {
-    align-self: flex-start;
-    background-color: #f0f0f0;
-    padding: 14px 18px; /* Adjusted padding */
-    border-radius: 12px 12px 12px 4px; /* More rounded corners */
-    font-size: 16px;
-    line-height: 1.6; /* Slightly increased line height */
-    margin-bottom: 10px; /* Adjusted margin */
-    max-width: 85%; /* Slightly reduced max-width for better wrapping */
-    word-wrap: break-word;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    transform: scale(0.95); /* Slightly smaller initially */
-    opacity: 0;           /* Initially transparent */
-    animation: messageAppear 0.3s ease-out forwards; /* Message appearance animation */
-    animation-delay: 0.1s; /* Slight delay for staggered appearance */
-}
-
-/* User message bubble */
-.user-message-container {
-    align-self: flex-end;
-    background-color: #e1f5fe;
-    padding: 14px 18px; /* Adjusted padding */
-    border-radius: 12px 12px 4px 12px; /* More rounded corners */
-    font-size: 16px;
-    line-height: 1.6; /* Slightly increased line height */
-    margin-bottom: 10px; /* Adjusted margin */
-    max-width: 85%; /* Slightly reduced max-width for better wrapping */
-    word-wrap: break-word;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    transform: scale(0.95); /* Slightly smaller initially */
-    opacity: 0;           /* Initially transparent */
-    animation: messageAppear 0.3s ease-out forwards; /* Message appearance animation */
-    animation-delay: 0.1s; /* Slight delay for staggered appearance */
-}
-
-@keyframes messageAppear {
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-
-/* Input bar container */
-.input-container {
-    display: flex;
-    align-items: center;
-    background-color: #FFFFFF;
-    border-top: 1px solid #E0E0E0;
-    min-height: 60px;
-    padding: 10px 16px; /* Adjusted padding */
-}
-
-/* Textarea for user input */
-.input-message {
-    flex: 1;
-    font-size: 16px;
-    line-height: 1.5;
-    border: none;
-    resize: none;
-    padding: 10px; /* Adjusted padding */
-    outline: none;
-    border-radius: 8px; /* Rounded input field */
-    background-color: #f5f5f5; /* Light gray background for input */
-    transition: background-color 0.3s ease; /* Smooth background transition for input */
-}
-
-.input-message:focus {
-    background-color: #fff; /* White background on focus */
-    box-shadow: 0 0 0 2px #2196F330; /* Subtle blue focus ring */
-}
-
-
-/* Send button */
-.btn-send {
-    width: 90px; /* Slightly wider send button */
-    height: 40px; /* Slightly taller send button */
-    margin-left: 10px; /* Adjusted margin */
-    font-size: 15px; /* Slightly larger font size for send button */
-    border: none;
-    background-color: #2196F3; /* Consistent button color */
-    color: #fff;
-    cursor: pointer;
-    border-radius: 20px; /* More rounded send button */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* More modern font */
-    font-weight: 500; /* Slightly bolder font weight */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth send button transitions */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Subtle shadow for send button */
-}
-
-.btn-send:hover {
-    background-color: #1976D2; /* Darker blue on hover */
-    transform: translateY(-1px); /* Slight lift on hover for interactivity */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* More pronounced shadow on hover */
-}
-
-/* Error messages */
-.error-message-container {
-    align-self: flex-start;
-    margin-bottom: 10px; /* Adjusted margin */
-    color: #ff5252; /* Brighter red for error messages */
-    font-size: 16px;
-    line-height: 1.6; /* Slightly increased line height */
-    padding: 14px 18px; /* Adjusted padding */
-    border-radius: 12px; /* More rounded error messages */
-    background-color: #ffebee; /* Very light red background for errors */
-    max-width: 85%; /* Slightly reduced max-width */
-    border: 1px solid #ffcdd2; /* Light red border for errors */
-}
-
-/* Markdown styles - no changes needed, they are already well-defined */
-
-/* Media query for desktop layout (wider screens) */
-@media (min-width: 768px) {
-    .chat-wrapper {
-        position: fixed;
-        width: auto;
-        background-color: transparent;
-        backdrop-filter: none; /* Remove backdrop filter on desktop if not desired */
-        box-shadow: none;       /* Remove background shadow on desktop for cleaner look */
-    }
-
-    .right-section {
-        flex: 0 0 calc(100vw / 4); /* Slightly wider chat on desktop */
-        border-radius: 12px; /* Rounded corners on desktop right section */
-        overflow: hidden; /* Clip content due to rounded corners */
-    }
-    .chat-history {
-         border-radius: 0 0 12px 12px; /* Rounded bottom corners for chat history on desktop */
-    }
-    .input-container {
-        border-radius: 0 0 12px 12px; /* Rounded bottom corners for input on desktop */
-    }
-}
-
-/* Media query for mobile layout (narrower screens) */
+/* Responsive Design */
 @media (max-width: 767px) {
-    .chat-wrapper {
-        position: fixed; /* Keep fixed for overlay on mobile */
-        display: flex;
-        background-color: rgba(255, 255, 255, 0.98); /* Slightly less transparent white on mobile */
-        backdrop-filter: blur(8px); /* Stronger blur on mobile */
-    }
-
-    .left-section,
-    .resizable-divider {
-        display: none;
-    }
-
     .right-section {
-        flex: 1;
-        height: 100%; /* Ensure right-section takes full height */
-        border-radius: 0; /* No rounded corners on mobile full screen */
-        box-shadow: none;   /* No shadow on mobile full screen */
-    }
-
-    .input-container {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        border-radius: 0; /* No rounded corners on mobile input container */
-    }
-    .chat-history {
-        border-radius: 0; /* No rounded corners on mobile chat history */
+        border-radius: 12px 12px 0 0;
     }
 }
-
-
-
 
 
 
