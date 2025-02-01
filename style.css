@@ -523,7 +523,7 @@ website fonts */
   h1, h2, h3, h4, li, p {
       /* font-family: 'Comic Neue', sans-serif; */
          font-family: "Charter", serif;
-      color: #333; /* Default text color for better visibility */
+      color: #292929; /* Default text color for better visibility */
   }
   h1 {
       font-weight: 300; /* Light font weight for h1 */
@@ -572,8 +572,11 @@ website fonts */
         color: #FFFFFF !important; /* Light text for dark mode */
     }
       /* Default light mode (not dark) */
+     .html {
+        background-color: #ffffff; /* Light gray background for light mode */
+    }
     .card {
-        background-color: #f2f2f2; /* Light gray background for light mode */
+        background-color: #ffffff; /* Light gray background for light mode */
     }
 
     html.dark-mode .card {
