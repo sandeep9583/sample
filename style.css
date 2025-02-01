@@ -573,7 +573,7 @@ website fonts */
     }
       /* Default light mode (not dark) */
      .html {
-        background-color: #ffffff; /* Light gray background for light mode */
+        background-color: #FFFFFF !important; /* Light gray background for light mode */
     }
     .card {
         background-color: #ffffff; /* Light gray background for light mode */
