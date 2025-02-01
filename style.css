@@ -571,9 +571,11 @@ website fonts */
         font-family: "Charter", serif;
         color: #FFFFFF !important; /* Light text for dark mode */
     }
+    
+    
       /* Default light mode (not dark) */
-     .html {
-        background-color: #FFFFFF !important; /* Light gray background for light mode */
+    not(.dark-mode) {
+        background-color: #FFFFFF !important;
     }
     .card {
         background-color: #ffffff; /* Light gray background for light mode */
