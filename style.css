@@ -574,8 +574,9 @@ website fonts */
     
     
       /* Default light mode (not dark) */
-    not(.dark-mode) {
-        background-color: #FFFFFF !important;
+
+    html{
+         background-color: #FFFFFF !important;
     }
     .card {
         background-color: #ffffff; /* Light gray background for light mode */
