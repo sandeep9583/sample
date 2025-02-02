@@ -241,7 +241,7 @@ Your primary function is to answer user queries helpfully, professionally, polit
 * **Output Length:** Keep all responses under 500 words.
 * **CollegeHive Mention:** Mention CollegeHive only if directly relevant to the user's query (e.g., if asked about your origin or services).
 
-**Output Format:** Output should be in Markdown. Utilize bullet points frequently to present information clearly and concisely. If a practical example would significantly enhance understanding, include one formatted appropriately within the Markdown. Use newline characters (\n) for formatting and line breaks where needed.
+**Output Format:** Output should be in Markdown. Utilize bullet points frequently to present information clearly and concisely. If a practical example would significantly enhance understanding, include one formatted appropriately within the Markdown. Use newline characters (\\n) for formatting and line breaks where needed.
 
 **Contextual Information:**
 
@@ -250,21 +250,23 @@ Your primary function is to answer user queries helpfully, professionally, polit
 
 **Current User Input:** ${userMessage}`;
 
-                        // Groq API Keys List
+                        // Encoded Groq API Keys List (Base64 encoded)
+                        const encodedGroqApiKeys = [
+                            'Z3NrX1UwWVlic1FHTFdTWlc4RXY3NGV1V0d5YjNGWUk2QXVHa2I4MFBoUzdLU2pTVjVFZzdoWQ==',
+                            'Z3NrX1pTbUg2cG11THJlMGRKaFN2SE5xV0d5YjNGWVFaMlVVaEVtSlJMUVBQUzVqN1I1NkNyTg==',
+                            'Z3NrX1BWNnJEemk2MzQ0RlB4RGoqbHBjV0d5YjNGWXRCZnZhU1ZkOWszR3FmR2JpQ2dEYXpnYw==',
+                            'Z3NrXzhaWXR0dDhDbkRmSzJ0OVVVazd5V0d5YjNGWWM0ZllBa3B1WjB5c3BRbEpVR2ZuZjRDeg==',
+                            'Z3NrX05sVFdCa3BydFI0ZDZ6MmFLTmRPV0d5YjNGWWVGbkpvUkR5SjJrdytaeWFuaU1VMkRXcw==',
+                            'Z3NrX29rMjhUZzBueGoxcmlxWG5iVmx4V0d5YjNGWTFZQVhCWk9NV1NYN21mcVZGOFRDQnR0'
+                        ];
 
-                        const groqApiKeys = [
-    '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',
-    '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',
-    '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',
-    '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',
-    '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',
-    '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'
-];        
-
-                        // Function to get a random API key
+                        // Function to get a random API key (now decodes the key)
                         function getRandomApiKey() {
-                            const randomIndex = Math.floor(Math.random() * groqApiKeys.length);
-                            return groqApiKeys[randomIndex];
+                            const randomIndex = Math.floor(Math.random() * encodedGroqApiKeys.length);
+                            const encodedKey = encodedGroqApiKeys[randomIndex];
+                            // Decode the Base64 encoded key
+                            const decodedApiKey = atob(encodedKey);
+                            return decodedApiKey;
                         }
 
                         const apiKey = getRandomApiKey();
@@ -577,20 +579,24 @@ document.addEventListener("DOMContentLoaded", function() {
         [A concise paragraph summarizing the main takeaways. Ensure appropriate new lines are used for readability where needed, but avoid unnecessary filler.]
         `;
 
-        // Groq API Keys List
-        const groqApiKeys = [
-    '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',
-    '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',
-    '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',
-    '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',
-    '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',
-    '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'
-];
+        // Encoded Groq API Keys List (Base64 encoded)
+        const encodedGroqApiKeys = [
+            'Z3NrX1UwWVlic1FHTFdTWlc4RXY3NGV1V0d5YjNGWUk2QXVHa2I4MFBoUzdLU2pTVjVFZzdoWQ==',
+            'Z3NrX1pTbUg2cG11THJlMGRKaFN2SE5xV0d5YjNGWVFaMlVVaEVtSlJMUVBQUzVqN1I1NkNyTg==',
+            'Z3NrX1BWNnJEemk2MzQ0RlB4RGoqbHBjV0d5YjNGWXRCZnZhU1ZkOWszR3FmR2JpQ2dEYXpnYw==',
+            'Z3NrXzhaWXR0dDhDbkRmSzJ0OVVVazd5V0d5YjNGWWM0ZllBa3B1WjB5c3BRbEpVR2ZuZjRDeg==',
+            'Z3NrX05sVFdCa3BydFI0ZDZ6MmFLTmRPV0d5YjNGWWVGbkpvUkR5SjJrdytaeWFuaU1VMkRXcw==',
+            'Z3NrX29rMjhUZzBueGoxcmlxWG5iVmx4V0d5YjNGWTFZQVhCWk9NV1NYN21mcVZGOFRDQnR0'
+        ];
 
-        // Function to get a random API key
+
+        // Function to get a random API key (now decodes the key)
         function getRandomApiKey() {
-            const randomIndex = Math.floor(Math.random() * groqApiKeys.length);
-            return groqApiKeys[randomIndex];
+            const randomIndex = Math.floor(Math.random() * encodedGroqApiKeys.length);
+            const encodedKey = encodedGroqApiKeys[randomIndex];
+            // Decode the Base64 encoded key
+            const decodedApiKey = atob(encodedKey);
+            return decodedApiKey;
         }
 
         const apiKey = getRandomApiKey();
@@ -720,3 +726,19 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     });
+
+/*
+  SECURITY WARNING:
+
+  The Groq API keys are encoded using Base64 in this client-side JavaScript code.
+  THIS IS NOT A SECURE SOLUTION FOR PRODUCTION APPLICATIONS.
+
+  Anyone can easily decode these keys by viewing the page source or using browser developer tools.
+
+  For production, you MUST implement a backend proxy to handle API requests securely.
+  Your frontend should communicate with your backend, and your backend should make
+  the requests to the Groq API using securely stored API keys.
+
+  This encoding is ONLY for basic obfuscation and should NOT be relied upon for
+  real security.
+*/
