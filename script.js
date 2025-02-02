@@ -327,19 +327,23 @@ Your primary function is to answer user queries helpfully, professionally, polit
                                         }
                                         // Handle chunk
                                         const textChunk = new TextDecoder().decode(value);
-                                        try {
-                                            const lines = textChunk.split('\n').filter(line => line.trim() !== '');
-                                            for (const line of lines) {
-                                                if (line.startsWith('data:')) {
-                                                    const jsonPart = line.substring(5).trim();
+                                        const lines = textChunk.split('\n').filter(line => line.trim() !== '');
+                                        for (const line of lines) {
+                                            if (line.startsWith('data:')) {
+                                                const jsonPart = line.substring(5).trim();
+                                                if (jsonPart === '[DONE]') { // Handle [DONE] signal
+                                                    reader.cancel(); // Stop reading the stream
+                                                    return;        // Exit processStream, which will finalize the last textBuffer
+                                                }
+                                                try {
                                                     const parsed = JSON.parse(jsonPart);
                                                     if (parsed.choices && parsed.choices[0] && parsed.choices[0].delta && parsed.choices[0].delta.content) {
                                                         textBuffer += parsed.choices[0].delta.content;
                                                     }
+                                                } catch (e) {
+                                                    console.error("Error parsing JSON chunk:", e, jsonPart); // Log the problematic chunk
                                                 }
                                             }
-                                        } catch (e) {
-                                            console.error("Error parsing JSON chunk:", e, textChunk);
                                         }
                                         processStream();
                                     });
