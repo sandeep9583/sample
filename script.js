@@ -251,15 +251,15 @@ Your primary function is to answer user queries helpfully, professionally, polit
 **Current User Input:** ${userMessage}`;
 
                         // Groq API Keys List
+
                         const groqApiKeys = [
-                            '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',
-                            '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',
-                            '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',
-                            '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',
-                            'gsk_8ZYqtt8CnDfK2t9UUUh9yWGdyb3FYcNfYAkpuZ0yspQIJUGfnf4Cx',
-                            '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',
-                            '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'
-                        ];
+    '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',
+    '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',
+    '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',
+    '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',
+    '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',
+    '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'
+];        
 
                         // Function to get a random API key
                         function getRandomApiKey() {
@@ -579,14 +579,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Groq API Keys List
         const groqApiKeys = [
-            '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',
-            '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',
-            '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',
-            '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',
-            'gsk_8ZYqtt8CnDfK2t9UUUh9yWGdyb3FYcNfYAkpuZ0yspQIJUGfnf4Cx',
-            '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',
-            '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'
-        ];
+    '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',
+    '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',
+    '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',
+    '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',
+    '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',
+    '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'
+];
 
         // Function to get a random API key
         function getRandomApiKey() {
