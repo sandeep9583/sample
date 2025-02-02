@@ -252,21 +252,19 @@ Your primary function is to answer user queries helpfully, professionally, polit
 
                         // Encoded Groq API Keys List (Base64 encoded)
                         const encodedGroqApiKeys = [
-                            'Z3NrX1UwWVlic1FHTFdTWlc4RXY3NGV1V0d5YjNGWUk2QXVHa2I4MFBoUzdLU2pTVjVFZzdoWQ==',
-                            'Z3NrX1pTbUg2cG11THJlMGRKaFN2SE5xV0d5YjNGWVFaMlVVaEVtSlJMUVBQUzVqN1I1NkNyTg==',
-                            'Z3NrX1BWNnJEemk2MzQ0RlB4RGoqbHBjV0d5YjNGWXRCZnZhU1ZkOWszR3FmR2JpQ2dEYXpnYw==',
-                            'Z3NrXzhaWXR0dDhDbkRmSzJ0OVVVazd5V0d5YjNGWWM0ZllBa3B1WjB5c3BRbEpVR2ZuZjRDeg==',
-                            'Z3NrX05sVFdCa3BydFI0ZDZ6MmFLTmRPV0d5YjNGWWVGbkpvUkR5SjJrdytaeWFuaU1VMkRXcw==',
-                            'Z3NrX29rMjhUZzBueGoxcmlxWG5iVmx4V0d5YjNGWTFZQVhCWk9NV1NYN21mcVZGOFRDQnR0'
+                            'gsk_U0YYbsQGLWSZW8Ev74euWGy3FYI6AuGkb80PhS7KSjSV5Eg7hY',
+                            'gsk_zSmH6pmuLre0dJhSvHNqWGy3FYQZ2UUeHmJRL1PPQ5j7R56CrN',
+                            'gsk_PV6rDzi6344FPxDjqlpcWGy3FYtBfvaSVd9k3GqfGbiCgDayzg',
+                            'gsk_8ZYttd8CnDfK2t9UUh9yWGy3FYcNfYAkpuZ0yspQlJUGfnf4Cx',
+                            'gsk_NlTWbkprtR4d6z2aKNoOWGy3FYeFnJoRDyJ2kwKzanimMU2DWs',
+                            'gsk_ok28Tg0nxgj1riXnbVlxWGy3FY1YAZxBZOMWSX7mfqVF8TCBDt'
                         ];
 
                         // Function to get a random API key (now decodes the key)
                         function getRandomApiKey() {
                             const randomIndex = Math.floor(Math.random() * encodedGroqApiKeys.length);
-                            const encodedKey = encodedGroqApiKeys[randomIndex];
-                            // Decode the Base64 encoded key
-                            const decodedApiKey = atob(encodedKey);
-                            return decodedApiKey;
+                            const apiKey = encodedGroqApiKeys[randomIndex];
+                            return apiKey;
                         }
 
                         const apiKey = getRandomApiKey();
@@ -553,22 +551,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Encoded Groq API Keys List (Base64 encoded)
         const encodedGroqApiKeys = [
-            'Z3NrX1UwWVlic1FHTFdTWlc4RXY3NGV1V0d5YjNGWUk2QXVHa2I4MFBoUzdLU2pTVjVFZzdoWQ==',
-            'Z3NrX1pTbUg2cG11THJlMGRKaFN2SE5xV0d5YjNGWVFaMlVVaEVtSlJMUVBQUzVqN1I1NkNyTg==',
-            'Z3NrX1BWNnJEemk2MzQ0RlB4RGoqbHBjV0d5YjNGWXRCZnZhU1ZkOWszR3FmR2JpQ2dEYXpnYw==',
-            'Z3NrXzhaWXR0dDhDbkRmSzJ0OVVVazd5V0d5YjNGWWM0ZllBa3B1WjB5c3BRbEpVR2ZuZjRDeg==',
-            'Z3NrX05sVFdCa3BydFI0ZDZ6MmFLTmRPV0d5YjNGWWVGbkpvUkR5SjJrdytaeWFuaU1VMkRXcw==',
-            'Z3NrX29rMjhUZzBueGoxcmlxWG5iVmx4V0d5YjNGWTFZQVhCWk9NV1NYN21mcVZGOFRDQnR0'
+            'gsk_U0YYbsQGLWSZW8Ev74euWGy3FYI6AuGkb80PhS7KSjSV5Eg7hY',
+            'gsk_zSmH6pmuLre0dJhSvHNqWGy3FYQZ2UUeHmJRL1PPQ5j7R56CrN',
+            'gsk_PV6rDzi6344FPxDjqlpcWGy3FYtBfvaSVd9k3GqfGbiCgDayzg',
+            'gsk_8ZYttd8CnDfK2t9UUh9yWGy3FYcNfYAkpuZ0yspQlJUGfnf4Cx',
+            'gsk_NlTWbkprtR4d6z2aKNoOWGy3FYeFnJoRDyJ2kwKzanimMU2DWs',
+            'gsk_ok28Tg0nxgj1riXnbVlxWGy3FY1YAZxBZOMWSX7mfqVF8TCBDt'
         ];
 
 
         // Function to get a random API key (now decodes the key)
         function getRandomApiKey() {
             const randomIndex = Math.floor(Math.random() * encodedGroqApiKeys.length);
-            const encodedKey = encodedGroqApiKeys[randomIndex];
-            // Decode the Base64 encoded key
-            const decodedApiKey = atob(encodedKey);
-            return decodedApiKey;
+            const apiKey = encodedGroqApiKeys[randomIndex];
+            return apiKey;
         }
 
         const apiKey = getRandomApiKey();
