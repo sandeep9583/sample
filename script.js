@@ -251,14 +251,16 @@ Your primary function is to answer user queries helpfully, professionally, polit
 **Current User Input:** ${userMessage}`;
 
                         // Encoded Groq API Keys List (Base64 encoded)
-                        const encodedGroqApiKeys = [
-                            'gsk_U0YYbsQGLWSZW8Ev74euWGy3FYI6AuGkb80PhS7KSjSV5Eg7hY',
-                            'gsk_zSmH6pmuLre0dJhSvHNqWGy3FYQZ2UUeHmJRL1PPQ5j7R56CrN',
-                            'gsk_PV6rDzi6344FPxDjqlpcWGy3FYtBfvaSVd9k3GqfGbiCgDayzg',
-                            'gsk_8ZYttd8CnDfK2t9UUh9yWGy3FYcNfYAkpuZ0yspQlJUGfnf4Cx',
-                            'gsk_NlTWbkprtR4d6z2aKNoOWGy3FYeFnJoRDyJ2kwKzanimMU2DWs',
-                            'gsk_ok28Tg0nxgj1riXnbVlxWGy3FY1YAZxBZOMWSX7mfqVF8TCBDt'
-                        ];
+                        
+                                const encodedGroqApiKeys = [
+           
+            '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',
+            "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",
+            "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",
+            "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",
+            "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",
+            "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"
+        ];
 
                         // Function to get a random API key (now decodes the key)
                         function getRandomApiKey() {
@@ -551,12 +553,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Encoded Groq API Keys List (Base64 encoded)
         const encodedGroqApiKeys = [
-            'gsk_U0YYbsQGLWSZW8Ev74euWGy3FYI6AuGkb80PhS7KSjSV5Eg7hY',
-            'gsk_zSmH6pmuLre0dJhSvHNqWGy3FYQZ2UUeHmJRL1PPQ5j7R56CrN',
-            'gsk_PV6rDzi6344FPxDjqlpcWGy3FYtBfvaSVd9k3GqfGbiCgDayzg',
-            'gsk_8ZYttd8CnDfK2t9UUh9yWGy3FYcNfYAkpuZ0yspQlJUGfnf4Cx',
-            'gsk_NlTWbkprtR4d6z2aKNoOWGy3FYeFnJoRDyJ2kwKzanimMU2DWs',
-            'gsk_ok28Tg0nxgj1riXnbVlxWGy3FY1YAZxBZOMWSX7mfqVF8TCBDt'
+           
+            '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',
+            "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",
+            "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",
+            "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",
+            "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",
+            "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"
         ];
 
 
