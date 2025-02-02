@@ -579,7 +579,7 @@ website fonts */
          background-color: #FFFFFF !important;
     }
     html.dark-mode{
-        background-color: #000 !important; /* Black background for dark mode */
+        background-color: #0a0a0a !important; /* Black background for dark mode */
     }
     .card {
         background-color: #ffffff; /* Light gray background for light mode */
