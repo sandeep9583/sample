@@ -1,4 +1,3 @@
-// chat
 document.addEventListener('DOMContentLoaded', function () {
             // 1) Capture the text from .page-content.clearfix, but do not display it in chat
             const pageContentDiv = document.querySelector('div.page-content.clearfix');
@@ -251,12 +250,32 @@ Your primary function is to answer user queries helpfully, professionally, polit
 
 **Current User Input:** ${userMessage}`;
 
+                        // Groq API Keys List
+                        const groqApiKeys = [
+                            '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',
+                            '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',
+                            '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',
+                            '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',
+                            'gsk_8ZYqtt8CnDfK2t9UUUh9yWGdyb3FYcNfYAkpuZ0yspQIJUGfnf4Cx',
+                            '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',
+                            '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'
+                        ];
+
+                        // Function to get a random API key
+                        function getRandomApiKey() {
+                            const randomIndex = Math.floor(Math.random() * groqApiKeys.length);
+                            return groqApiKeys[randomIndex];
+                        }
+
+                        const apiKey = getRandomApiKey();
+
+
                         // Assistant call (example using fetch)
                         fetch('https://api.groq.com/openai/v1/chat/completions', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'Authorization': 'Bearer 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'
+                                'Authorization': `Bearer ${apiKey}` // Use randomly selected API key
                             },
                             body: JSON.stringify({
                                 "messages": [{
@@ -371,7 +390,7 @@ document.addEventListener("DOMContentLoaded", function() {
       // 1. Find the container and the reference (Settings link)
       const linksContainer = document.querySelector(".links.text-center");
       const settingsLink = document.querySelector('a[data-shortcut="settings_view"]');
-      
+
       // 2. Create the Music button (a tag) entirely via JavaScript
       const musicLink = document.createElement("a");
       musicLink.href = "#";
@@ -391,7 +410,7 @@ document.addEventListener("DOMContentLoaded", function() {
         </svg>
         Music
       `;
-      
+
       // 3. Insert the Music button just before the Settings link
       linksContainer.insertBefore(musicLink, settingsLink);
 
@@ -410,7 +429,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
       // 5. Retrieve existing music state from sessionStorage or default to 'stopped'
       let musicState = sessionStorage.getItem('musicState') || 'stopped';
-      
+
       // 6. If previous state was 'playing', start music on page load
       if (musicState === 'playing') {
         audioElement.play().catch(err => console.log(err));
@@ -448,7 +467,7 @@ document.addEventListener("DOMContentLoaded", function() {
       // infoButton.textContent = 'ⓘ';
 
                 // const infoButton = document.getElementById('info-button');
-    
+
     // Create an image element
     const assistantAvatar = document.createElement('img');
     assistantAvatar.src = 'https://img.icons8.com/?size=100&id=59023&format=png&color=000000'; // Replace with the actual image URL
@@ -460,7 +479,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Append the image to the button
     infoButton.appendChild(assistantAvatar);
 
-             
+
 
       // Append the info button inside the heading at the end
       heading.appendChild( infoButton);
@@ -470,7 +489,7 @@ document.addEventListener("DOMContentLoaded", function() {
        ********************************************************/
       const overlayHTML = `
         <div class="overlay-header">
-        <img src="https://img.icons8.com/?size=100&amp;id=59023&amp;format=png&amp;color=000000" class="avatar" style="margin-right: 10px; width: 24px; height: 24px;">
+        <img src="https://img.icons8.com/?size=100&id=59023&format=png&color=000000" class="avatar" style="margin-right: 10px; width: 24px; height: 24px;">
           <strong>AI Summary</strong>
           <div>
             <button class="copy-button" id="copy-button">Copy</button>
@@ -499,7 +518,7 @@ document.addEventListener("DOMContentLoaded", function() {
       const pageContentDiv = document.querySelector('div.page-content.clearfix');
       let hiddenContext = '';
       if (pageContentDiv) {
-        hiddenContext = pageContentDiv.innerText; 
+        hiddenContext = pageContentDiv.innerText;
         console.log('Captured Page Content (hidden):', hiddenContext);
       }
 
@@ -558,12 +577,32 @@ document.addEventListener("DOMContentLoaded", function() {
         [A concise paragraph summarizing the main takeaways. Ensure appropriate new lines are used for readability where needed, but avoid unnecessary filler.]
         `;
 
+        // Groq API Keys List
+        const groqApiKeys = [
+            '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',
+            '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',
+            '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',
+            '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',
+            'gsk_8ZYqtt8CnDfK2t9UUUh9yWGdyb3FYcNfYAkpuZ0yspQIJUGfnf4Cx',
+            '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',
+            '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'
+        ];
+
+        // Function to get a random API key
+        function getRandomApiKey() {
+            const randomIndex = Math.floor(Math.random() * groqApiKeys.length);
+            return groqApiKeys[randomIndex];
+        }
+
+        const apiKey = getRandomApiKey();
+
+
         try {
           const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer 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'
+              'Authorization': `Bearer ${apiKey}` // Use randomly selected API Key
             },
             body: JSON.stringify({
               "messages": [
@@ -682,5 +721,3 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     });
-
-
