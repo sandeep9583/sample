@@ -236,10 +236,10 @@ Your primary function is to answer user queries helpfully, professionally, polit
 * **Brevity:** Be brief and to the point.
 * **Conditional Detail (CRITICAL):**
     * **If the user explicitly asks for an explanation or asks "why/how":** Provide a clear and concise explanation.
-    * **Otherwise:** Answer in **one sentence without explanation.**
-* **Inappropriate Content:** Do not respond to inappropriate, offensive, or unethical content. Disengage politely if necessary.
-* **Output Length:** Keep all responses under 500 words.
-* **CollegeHive Mention:** Mention CollegeHive only if directly relevant to the user's query (e.g., if asked about your origin or services).
+                    * **Otherwise:** Answer in **one sentence without explanation.**
+            * **Inappropriate Content:** Do not respond to inappropriate, offensive, or unethical content. Disengage politely if necessary.
+            * **Output Length:** Keep all responses under 500 words.
+            * **CollegeHive Mention:** Mention CollegeHive only if directly relevant to the user's query (e.g., if asked about your origin or services).
 
 **Output Format:** Output should be in Markdown. Utilize bullet points frequently to present information clearly and concisely. If a practical example would significantly enhance understanding, include one formatted appropriately within the Markdown. Use newline characters (\\n) for formatting and line breaks where needed.
 
@@ -271,8 +271,7 @@ Your primary function is to answer user queries helpfully, professionally, polit
 
                         const apiKey = getRandomApiKey();
 
-
-                        // Assistant call (example using fetch)
+                        // Assistant call (example using fetch) - STREAMING IS FALSE NOW
                         fetch('https://api.groq.com/openai/v1/chat/completions', {
                             method: 'POST',
                             headers: {
@@ -288,67 +287,36 @@ Your primary function is to answer user queries helpfully, professionally, polit
                                 "temperature": 1,
                                 "max_tokens": 1024,
                                 "top_p": 1,
-                                "stream": true
+                                "stream": false // Streaming is set to false here
                             })
                         })
                             .then(response => {
                                 if (!response.ok) {
                                     throw new Error(`HTTP error! Status: ${response.status}`);
                                 }
-                                const reader = response.body.getReader();
-                                let textBuffer = '';
-                                const processStream = () => {
-                                    reader.read().then(({
-                                        done,
-                                        value
-                                    }) => {
-                                        if (done) {
-                                            // Stream done => finalize assistant bubble
-                                            if (textBuffer) {
-                                                const assistantContainer = document.createElement('div');
-                                                assistantContainer.classList.add('assistant-message-container');
-                                                // Add assistant avatar
-                                                const assistantAvatar = document.createElement('img');
-                                                assistantAvatar.src = assistantAvatarSrc;
-                                                assistantAvatar.classList.add('avatar');
-                                                assistantAvatar.style.marginRight = '8px';
-                                                assistantContainer.appendChild(assistantAvatar);
-                                                // Bubble content (render with Marked.js if available)
-                                                const botTextDiv = document.createElement('div');
-                                                botTextDiv.innerHTML = (window.marked) ? marked.parse(textBuffer) : textBuffer;
-                                                assistantContainer.appendChild(botTextDiv);
-                                                chatHistory.appendChild(assistantContainer);
-                                                // Save chatMessages.push(assistantContainer.outerHTML);
-                                                chatMessages.push(assistantContainer.outerHTML);
-                                                sessionStorage.setItem('chatMessages', JSON.stringify(chatMessages));
-                                                chatHistory.scrollTop = chatHistory.scrollHeight;
-                                            }
-                                            return;
-                                        }
-                                        // Handle chunk
-                                        const textChunk = new TextDecoder().decode(value);
-                                        const lines = textChunk.split('\n').filter(line => line.trim() !== '');
-                                        for (const line of lines) {
-                                            if (line.startsWith('data:')) {
-                                                const jsonPart = line.substring(5).trim();
-                                                if (jsonPart === '[DONE]') { // Handle [DONE] signal
-                                                    reader.cancel(); // Stop reading the stream
-                                                    return;        // Exit processStream, which will finalize the last textBuffer
-                                                }
-                                                try {
-                                                    const parsed = JSON.parse(jsonPart);
-                                                    if (parsed.choices && parsed.choices[0] && parsed.choices[0].delta && parsed.choices[0].delta.content) {
-                                                        textBuffer += parsed.choices[0].delta.content;
-                                                    }
-                                                } catch (e) {
-                                                    console.error("Error parsing JSON chunk:", e, jsonPart); // Log the problematic chunk
-                                                }
-                                            }
-                                        }
-                                        processStream();
-                                    });
-                                };
-                                processStream();
+                                return response.json(); // Get the full JSON response
+                            })
+                            .then(data => {
+                                // Process the complete response data
+                                const assistantResponse = data.choices[0].message.content;
+                                const assistantContainer = document.createElement('div');
+                                assistantContainer.classList.add('assistant-message-container');
+                                // Add assistant avatar
+                                const assistantAvatar = document.createElement('img');
+                                assistantAvatar.src = assistantAvatarSrc;
+                                assistantAvatar.classList.add('avatar');
+                                assistantAvatar.style.marginRight = '8px';
+                                assistantContainer.appendChild(assistantAvatar);
+                                // Bubble content (render with Marked.js if available)
+                                const botTextDiv = document.createElement('div');
+                                botTextDiv.innerHTML = (window.marked) ? marked.parse(assistantResponse) : assistantResponse;
+                                assistantContainer.appendChild(botTextDiv);
+                                chatHistory.appendChild(assistantContainer);
+                                // Save chatMessages.push(assistantContainer.outerHTML);
+                                chatMessages.push(assistantContainer.outerHTML);
+                                sessionStorage.setItem('chatMessages', JSON.stringify(chatMessages));
+                                chatHistory.scrollTop = chatHistory.scrollHeight;
+
                             })
                             .catch(error => {
                                 console.error("Error fetching from Groq API:", error);
@@ -624,43 +592,20 @@ document.addEventListener("DOMContentLoaded", function() {
               "temperature": 1,
               "max_tokens": 1024,
               "top_p": 1,
-              "stream": true
+              "stream": false // Streaming is set to false here
             })
           });
 
-          const reader = response.body.getReader();
-          const decoder = new TextDecoder('utf-8');
-
-          // SSE-like streaming loop
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            const chunk = decoder.decode(value, { stream: true });
-            const lines = chunk.split('\n');
-
-            for (const line of lines) {
-              if (!line.trim() || !line.startsWith('data: ')) continue;
-              if (line.includes('[DONE]')) break;
-
-              try {
-                const jsonStr = line.substring('data: '.length).trim();
-                const json = JSON.parse(jsonStr);
-
-                // If there's text content in choices, append it
-                if (json.choices && json.choices[0] && json.choices[0].delta) {
-                  const contentPart = json.choices[0].delta.content;
-                  if (contentPart) {
-                    resultText += contentPart;
-                    // Render on the fly
-                    markdownContent.innerHTML = marked.parse(resultText);
-                  }
-                }
-              } catch (e) {
-                console.error("JSON parse error", e, line);
-              }
+          if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
-          }
+            const data = await response.json(); // Get the full JSON response
+
+            // Process the complete response data
+            const assistantResponse = data.choices[0].message.content;
+            markdownContent.innerHTML = marked.parse(assistantResponse);
+
+
         } catch (error) {
           console.error('Error fetching data:', error);
           markdownContent.innerHTML = '<p style="color:red;">Error fetching data.</p>';
