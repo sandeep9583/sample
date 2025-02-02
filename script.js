@@ -1,3 +1,4 @@
+// chat
 document.addEventListener('DOMContentLoaded', function () {
             // 1) Capture the text from .page-content.clearfix, but do not display it in chat
             const pageContentDiv = document.querySelector('div.page-content.clearfix');
@@ -236,12 +237,12 @@ Your primary function is to answer user queries helpfully, professionally, polit
 * **Brevity:** Be brief and to the point.
 * **Conditional Detail (CRITICAL):**
     * **If the user explicitly asks for an explanation or asks "why/how":** Provide a clear and concise explanation.
-                    * **Otherwise:** Answer in **one sentence without explanation.**
-            * **Inappropriate Content:** Do not respond to inappropriate, offensive, or unethical content. Disengage politely if necessary.
-            * **Output Length:** Keep all responses under 500 words.
-            * **CollegeHive Mention:** Mention CollegeHive only if directly relevant to the user's query (e.g., if asked about your origin or services).
+    * **Otherwise:** Answer in **one sentence without explanation.**
+* **Inappropriate Content:** Do not respond to inappropriate, offensive, or unethical content. Disengage politely if necessary.
+* **Output Length:** Keep all responses under 500 words.
+* **CollegeHive Mention:** Mention CollegeHive only if directly relevant to the user's query (e.g., if asked about your origin or services).
 
-**Output Format:** Output should be in Markdown. Utilize bullet points frequently to present information clearly and concisely. If a practical example would significantly enhance understanding, include one formatted appropriately within the Markdown. Use newline characters (\\n) for formatting and line breaks where needed.
+**Output Format:** Output should be in Markdown. Utilize bullet points frequently to present information clearly and concisely. If a practical example would significantly enhance understanding, include one formatted appropriately within the Markdown. Use newline characters (\n) for formatting and line breaks where needed.
 
 **Contextual Information:**
 
@@ -250,33 +251,12 @@ Your primary function is to answer user queries helpfully, professionally, polit
 
 **Current User Input:** ${userMessage}`;
 
-                        // Encoded Groq API Keys List (Base64 encoded)
-                        
-                                const encodedGroqApiKeys = [
-           
-            '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',
-            "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",
-            "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",
-            "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",
-            "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",
-            "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"
-        ];
-
-                        // Function to get a random API key (now decodes the key)
-                        function getRandomApiKey() {
-                            const randomIndex = Math.floor(Math.random() * encodedGroqApiKeys.length);
-                            const apiKey = encodedGroqApiKeys[randomIndex];
-                            return apiKey;
-                        }
-
-                        const apiKey = getRandomApiKey();
-
-                        // Assistant call (example using fetch) - STREAMING IS FALSE NOW
+                        // Assistant call (example using fetch)
                         fetch('https://api.groq.com/openai/v1/chat/completions', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${apiKey}` // Use randomly selected API key
+                                'Authorization': 'Bearer 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'
                             },
                             body: JSON.stringify({
                                 "messages": [{
@@ -287,36 +267,63 @@ Your primary function is to answer user queries helpfully, professionally, polit
                                 "temperature": 1,
                                 "max_tokens": 1024,
                                 "top_p": 1,
-                                "stream": false // Streaming is set to false here
+                                "stream": true
                             })
                         })
                             .then(response => {
                                 if (!response.ok) {
                                     throw new Error(`HTTP error! Status: ${response.status}`);
                                 }
-                                return response.json(); // Get the full JSON response
-                            })
-                            .then(data => {
-                                // Process the complete response data
-                                const assistantResponse = data.choices[0].message.content;
-                                const assistantContainer = document.createElement('div');
-                                assistantContainer.classList.add('assistant-message-container');
-                                // Add assistant avatar
-                                const assistantAvatar = document.createElement('img');
-                                assistantAvatar.src = assistantAvatarSrc;
-                                assistantAvatar.classList.add('avatar');
-                                assistantAvatar.style.marginRight = '8px';
-                                assistantContainer.appendChild(assistantAvatar);
-                                // Bubble content (render with Marked.js if available)
-                                const botTextDiv = document.createElement('div');
-                                botTextDiv.innerHTML = (window.marked) ? marked.parse(assistantResponse) : assistantResponse;
-                                assistantContainer.appendChild(botTextDiv);
-                                chatHistory.appendChild(assistantContainer);
-                                // Save chatMessages.push(assistantContainer.outerHTML);
-                                chatMessages.push(assistantContainer.outerHTML);
-                                sessionStorage.setItem('chatMessages', JSON.stringify(chatMessages));
-                                chatHistory.scrollTop = chatHistory.scrollHeight;
-
+                                const reader = response.body.getReader();
+                                let textBuffer = '';
+                                const processStream = () => {
+                                    reader.read().then(({
+                                        done,
+                                        value
+                                    }) => {
+                                        if (done) {
+                                            // Stream done => finalize assistant bubble
+                                            if (textBuffer) {
+                                                const assistantContainer = document.createElement('div');
+                                                assistantContainer.classList.add('assistant-message-container');
+                                                // Add assistant avatar
+                                                const assistantAvatar = document.createElement('img');
+                                                assistantAvatar.src = assistantAvatarSrc;
+                                                assistantAvatar.classList.add('avatar');
+                                                assistantAvatar.style.marginRight = '8px';
+                                                assistantContainer.appendChild(assistantAvatar);
+                                                // Bubble content (render with Marked.js if available)
+                                                const botTextDiv = document.createElement('div');
+                                                botTextDiv.innerHTML = (window.marked) ? marked.parse(textBuffer) : textBuffer;
+                                                assistantContainer.appendChild(botTextDiv);
+                                                chatHistory.appendChild(assistantContainer);
+                                                // Save chatMessages.push(assistantContainer.outerHTML);
+                                                chatMessages.push(assistantContainer.outerHTML);
+                                                sessionStorage.setItem('chatMessages', JSON.stringify(chatMessages));
+                                                chatHistory.scrollTop = chatHistory.scrollHeight;
+                                            }
+                                            return;
+                                        }
+                                        // Handle chunk
+                                        const textChunk = new TextDecoder().decode(value);
+                                        try {
+                                            const lines = textChunk.split('\n').filter(line => line.trim() !== '');
+                                            for (const line of lines) {
+                                                if (line.startsWith('data:')) {
+                                                    const jsonPart = line.substring(5).trim();
+                                                    const parsed = JSON.parse(jsonPart);
+                                                    if (parsed.choices && parsed.choices[0] && parsed.choices[0].delta && parsed.choices[0].delta.content) {
+                                                        textBuffer += parsed.choices[0].delta.content;
+                                                    }
+                                                }
+                                            }
+                                        } catch (e) {
+                                            console.error("Error parsing JSON chunk:", e, textChunk);
+                                        }
+                                        processStream();
+                                    });
+                                };
+                                processStream();
                             })
                             .catch(error => {
                                 console.error("Error fetching from Groq API:", error);
@@ -364,7 +371,7 @@ document.addEventListener("DOMContentLoaded", function() {
       // 1. Find the container and the reference (Settings link)
       const linksContainer = document.querySelector(".links.text-center");
       const settingsLink = document.querySelector('a[data-shortcut="settings_view"]');
-
+      
       // 2. Create the Music button (a tag) entirely via JavaScript
       const musicLink = document.createElement("a");
       musicLink.href = "#";
@@ -384,7 +391,7 @@ document.addEventListener("DOMContentLoaded", function() {
         </svg>
         Music
       `;
-
+      
       // 3. Insert the Music button just before the Settings link
       linksContainer.insertBefore(musicLink, settingsLink);
 
@@ -403,7 +410,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
       // 5. Retrieve existing music state from sessionStorage or default to 'stopped'
       let musicState = sessionStorage.getItem('musicState') || 'stopped';
-
+      
       // 6. If previous state was 'playing', start music on page load
       if (musicState === 'playing') {
         audioElement.play().catch(err => console.log(err));
@@ -441,7 +448,7 @@ document.addEventListener("DOMContentLoaded", function() {
       // infoButton.textContent = 'ⓘ';
 
                 // const infoButton = document.getElementById('info-button');
-
+    
     // Create an image element
     const assistantAvatar = document.createElement('img');
     assistantAvatar.src = 'https://img.icons8.com/?size=100&id=59023&format=png&color=000000'; // Replace with the actual image URL
@@ -453,7 +460,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Append the image to the button
     infoButton.appendChild(assistantAvatar);
 
-
+             
 
       // Append the info button inside the heading at the end
       heading.appendChild( infoButton);
@@ -463,7 +470,7 @@ document.addEventListener("DOMContentLoaded", function() {
        ********************************************************/
       const overlayHTML = `
         <div class="overlay-header">
-        <img src="https://img.icons8.com/?size=100&id=59023&format=png&color=000000" class="avatar" style="margin-right: 10px; width: 24px; height: 24px;">
+        <img src="https://img.icons8.com/?size=100&amp;id=59023&amp;format=png&amp;color=000000" class="avatar" style="margin-right: 10px; width: 24px; height: 24px;">
           <strong>AI Summary</strong>
           <div>
             <button class="copy-button" id="copy-button">Copy</button>
@@ -492,7 +499,7 @@ document.addEventListener("DOMContentLoaded", function() {
       const pageContentDiv = document.querySelector('div.page-content.clearfix');
       let hiddenContext = '';
       if (pageContentDiv) {
-        hiddenContext = pageContentDiv.innerText;
+        hiddenContext = pageContentDiv.innerText; 
         console.log('Captured Page Content (hidden):', hiddenContext);
       }
 
@@ -551,34 +558,12 @@ document.addEventListener("DOMContentLoaded", function() {
         [A concise paragraph summarizing the main takeaways. Ensure appropriate new lines are used for readability where needed, but avoid unnecessary filler.]
         `;
 
-        // Encoded Groq API Keys List (Base64 encoded)
-        const encodedGroqApiKeys = [
-           
-            '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',
-            "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",
-            "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",
-            "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",
-            "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",
-            "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"
-        ];
-
-
-        // Function to get a random API key (now decodes the key)
-        function getRandomApiKey() {
-            const randomIndex = Math.floor(Math.random() * encodedGroqApiKeys.length);
-            const apiKey = encodedGroqApiKeys[randomIndex];
-            return apiKey;
-        }
-
-        const apiKey = getRandomApiKey();
-
-
         try {
           const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}` // Use randomly selected API Key
+              'Authorization': 'Bearer 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'
             },
             body: JSON.stringify({
               "messages": [
@@ -591,20 +576,43 @@ document.addEventListener("DOMContentLoaded", function() {
               "temperature": 1,
               "max_tokens": 1024,
               "top_p": 1,
-              "stream": false // Streaming is set to false here
+              "stream": true
             })
           });
 
-          if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+
+          // SSE-like streaming loop
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+              if (!line.trim() || !line.startsWith('data: ')) continue;
+              if (line.includes('[DONE]')) break;
+
+              try {
+                const jsonStr = line.substring('data: '.length).trim();
+                const json = JSON.parse(jsonStr);
+
+                // If there's text content in choices, append it
+                if (json.choices && json.choices[0] && json.choices[0].delta) {
+                  const contentPart = json.choices[0].delta.content;
+                  if (contentPart) {
+                    resultText += contentPart;
+                    // Render on the fly
+                    markdownContent.innerHTML = marked.parse(resultText);
+                  }
+                }
+              } catch (e) {
+                console.error("JSON parse error", e, line);
+              }
             }
-            const data = await response.json(); // Get the full JSON response
-
-            // Process the complete response data
-            const assistantResponse = data.choices[0].message.content;
-            markdownContent.innerHTML = marked.parse(assistantResponse);
-
-
+          }
         } catch (error) {
           console.error('Error fetching data:', error);
           markdownContent.innerHTML = '<p style="color:red;">Error fetching data.</p>';
@@ -675,18 +683,3 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-/*
-  SECURITY WARNING:
-
-  The Groq API keys are encoded using Base64 in this client-side JavaScript code.
-  THIS IS NOT A SECURE SOLUTION FOR PRODUCTION APPLICATIONS.
-
-  Anyone can easily decode these keys by viewing the page source or using browser developer tools.
-
-  For production, you MUST implement a backend proxy to handle API requests securely.
-  Your frontend should communicate with your backend, and your backend should make
-  the requests to the Groq API using securely stored API keys.
-
-  This encoding is ONLY for basic obfuscation and should NOT be relied upon for
-  real security.
-*/
