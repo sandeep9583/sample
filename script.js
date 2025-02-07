@@ -1,4 +1,3 @@
-// Hex decoding function (place this outside or at the top of your script)
 function hexDecode(hexString) {
     let decodedString = '';
     for (let i = 0; i < hexString.length; i += 2) {
@@ -14,7 +13,37 @@ const geminiHexApiKey = "41497A615379443031414D6c527367427A326344436551674F69533
 const geminiApiKey = hexDecode(geminiHexApiKey);
 const decodedApiKey = geminiApiKey; // Use Gemini API Key
 
-// chat
+let custom_instruction = `You are Hive Chat, an AI assistant created by CollegeHive, a student community platform founded by Sanjay Bandaru, Aman Thoyaj, and other Christ University students. CollegeHive offers services students need, currently operating Hive Notes (a platform for concise BBA notes based on the Program Course Plan) and a forum.
+
+Your primary function is to answer user queries helpfully, professionally, politely, and respectfully.
+
+**Key Behaviors:**
+
+* **Explanations:** Provide clear and concise explanations to ensure understanding.
+* **Brevity:** Be brief and to the point.
+* **Conditional Detail (CRITICAL):**
+    * **If the user explicitly asks for an explanation or asks "why/how":** Provide a clear and concise explanation.
+    * **Otherwise:** Answer in **one sentence without explanation.**
+* **Inappropriate Content:** Do not respond to inappropriate, offensive, or unethical content. Disengage politely if necessary.
+* **Output Length:** Keep all responses under 500 words.
+* **CollegeHive Mention:** Mention CollegeHive only if directly relevant to the user's query (e.g., if asked about your origin or services).
+
+**Output Format:** Output should be in Markdown. Utilize bullet points frequently to present information clearly and concisely. If a practical example would significantly enhance understanding, include one formatted appropriately within the Markdown. Use newline characters (\\n) for formatting and line breaks where needed.
+
+**Contextual Information:**
+
+* **Hidden Context:** ${hiddenContext} (Use this to understand the current context and any specific instructions on the page.)
+* **Previous Conversation:** ${chatMessages.map(m => m).join('\\n')} (Use this to maintain context and avoid repetition.)
+
+**Current User Input:** ${userMessage}`;
+
+let conversationHistory = [
+  {
+    "role": "system",
+    "content": custom_instruction}
+];
+
+
 document.addEventListener('DOMContentLoaded', function () {
     // 1) Capture the text from .page-content.clearfix, but do not display it in chat
     const pageContentDiv = document.querySelector('div.page-content.clearfix');
@@ -42,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('No user avatar found. Will proceed without it.');
         }
     };
+    loadUserAvatar(); // Load avatar on page load
 
     // 3) Session storage for chat messages (array of outerHTML strings)
     let chatMessages = [];
@@ -52,59 +82,27 @@ document.addEventListener('DOMContentLoaded', function () {
     // Store the original body content before opening chat
     let originalBodyContent = null;
 
-    // --------- 6) CONFIGURE A CUSTOM MARKDOWN RENDERER ---------
-    const customRenderer = {
-        heading(text, level) {
-            return `<div class="md-h${level}">${text}</div>`;
-        },
-        paragraph(text) {
-            return `<div class="md-p">${text}</div>`;
-        },
-        list(body, ordered) {
-            const type = ordered ? 'ol' : 'ul';
-            return `<${type} class="md-list">${body}</${type}>`;
-        },
-        listitem(text) {
-            return `<li class="md-li">${text}</li>`;
-        },
-        blockquote(quote) {
-            return `<blockquote class="md-blockquote">${quote}</blockquote>`;
-        },
-        strong(text) {
-            return `<strong class="md-strong">${text}</strong>`;
-        },
-        em(text) {
-            return `<em class="md-em">${text}</em>`;
-        },
-        codespan(text) {
-            return `<code class="md-code">${text}</code>`;
-        },
-        code(code, language) {
-            return `<pre class="md-pre"><code>${code}</code></pre>`;
-        },
-        hr() {
-            return `<hr class="md-hr">`;
-        },
-        link(href, title, text) {
-            const titleAttr = title ? ` title="${title}"` : '';
-            return `<a href="${href}" class="md-link"${titleAttr} rel="noopener noreferrer">${text}</a>`;
-        },
-        image(href, title, text) {
-            const titleAttr = title ? ` title="${title}"` : '';
-            return `<img src="${href}" alt="${text}"${titleAttr} class="md-img">`;
-        },
-    };
-
     // Create "Hive Chat" toggle button
-    const toggleButton = document.createElement('button');
-    toggleButton.textContent = 'Hive Chat';
-    toggleButton.classList.add('btn-hive-chat');
+    const toggleButton = document.createElement('div'); // Changed to div for the circle button structure
+    toggleButton.id = 'chat-circle';
+    toggleButton.setAttribute('data-toggle', 'tooltip');
+    toggleButton.setAttribute('data-placement', 'left');
+    toggleButton.title = 'Chat with us';
+    let toggleButtonInnerHTML = '';
+    if (wasChatOpen) {
+        toggleButtonInnerHTML = '<i class="fa fa-times"></i>'; // Icon if chat was open
+    } else {
+        toggleButtonInnerHTML = '<i class="fa fa-times"></i>'; // Default icon
+    }
+    toggleButton.innerHTML = toggleButtonInnerHTML;
+
     document.body.appendChild(toggleButton);
 
     // This function will open the chat UI
     function openChatUI() {
         // Mark chat as open in sessionStorage
         sessionStorage.setItem('isChatOpen', 'true');
+        toggleButton.style.display = 'none'; // Hide the toggle button after opening
 
         // Store the original body content
         originalBodyContent = document.body.innerHTML;
@@ -121,55 +119,58 @@ document.addEventListener('DOMContentLoaded', function () {
         const rightSection = document.createElement('div');
         rightSection.classList.add('right-section');
 
-        // Chat header
-        const chatHeader = document.createElement('div');
-        chatHeader.classList.add('chat-header');
-        const headerTitle = document.createElement('h2');
-        headerTitle.classList.add('chat-header-title');
-        headerTitle.textContent = 'Hive Chat';
+         // Chat Box - NEW UI STRUCTURE START
+        const chatBox = document.createElement('div');
+        chatBox.className = 'chat-box';
+        chatBox.style.display = 'block'; // Chat box is initially visible when opened
 
-        // Close button
-        const closeButton = document.createElement('button');
-        closeButton.classList.add('btn-close');
-        closeButton.textContent = 'X';
-        closeButton.addEventListener('click', function () {
-            // Restore the original body content
-            document.body.innerHTML = originalBodyContent;
-            // Re-append the toggle button (it was part of the original content)
-            document.body.appendChild(toggleButton);
-            // Clear session storage for "isChatOpen"
-            sessionStorage.removeItem('isChatOpen');
-        });
-        chatHeader.appendChild(headerTitle);
-        chatHeader.appendChild(closeButton);
-        rightSection.appendChild(chatHeader);
+        // Chat Box Header
+        const chatBoxHeader = document.createElement('div');
+        chatBoxHeader.className = 'chat-box-header';
+        const headerTitle = document.createElement('h4');
+        headerTitle.innerHTML = '<i class="fa fa-comment"></i> Hive Chat'; // Adjust icon class if needed
+        chatBoxHeader.appendChild(headerTitle);
+        const boxToggle = document.createElement('div');
+        boxToggle.className = 'chat-box-toggle';
+        const closeIcon = document.createElement('i');
+        closeIcon.className = 'fa fa-times'; // Adjust icon class if needed
+        boxToggle.appendChild(closeIcon);
+        chatBoxHeader.appendChild(boxToggle);
+        chatBox.appendChild(chatBoxHeader);
 
-        // Chat history
-        const chatHistory = document.createElement('div');
-        chatHistory.classList.add('chat-history');
+        // Chat Logs (History)
+        const chatLogs = document.createElement('div');
+        chatLogs.className = 'chat-logs';
+        chatBox.appendChild(chatLogs);
 
-        // Suggestion buttons container
+        // Suggestion Buttons Container
         const suggestionsContainer = document.createElement('div');
-        suggestionsContainer.classList.add('suggestions-container');
-        rightSection.appendChild(suggestionsContainer); // Add above input container
+        suggestionsContainer.classList.add('suggestion-buttons'); // Use the class from your existing suggestion logic
+        chatBox.appendChild(suggestionsContainer); // Append suggestions above input
 
-        // Input container
-        const inputContainer = document.createElement('div');
-        inputContainer.classList.add('input-container');
-
-        // Multiline input
+        // Input Container
+        const chatInputWrapper = document.createElement('div');
+        chatInputWrapper.className = 'chat-input-wrapper';
         const messageInput = document.createElement('textarea');
-        messageInput.classList.add('input-message');
-        messageInput.placeholder = 'Type your message...';
+        messageInput.id = 'chat-input';
+        messageInput.setAttribute('placeholder', 'Write your message here');
+        messageInput.rows = 1;
+        chatInputWrapper.appendChild(messageInput);
+        const chatSubmit = document.createElement('button');
+        chatSubmit.id = 'chat-submit';
+        chatSubmit.className = 'btn btn-sm'; // You might need to adjust button classes
+        chatSubmit.textContent = 'Send';
+        chatInputWrapper.appendChild(chatSubmit);
+        chatBox.appendChild(chatInputWrapper);
 
-        // Send button
-        const sendButton = document.createElement('button');
-        sendButton.textContent = 'Send';
-        sendButton.classList.add('btn-send');
-        inputContainer.appendChild(messageInput);
-        inputContainer.appendChild(sendButton);
-        rightSection.appendChild(chatHistory);
-        rightSection.appendChild(inputContainer);
+        // Clear Chat Button (add to header if desired)
+        const clearChatButton = document.createElement('button');
+        clearChatButton.id = 'clear-chat';
+        clearChatButton.textContent = 'Clear Chat';
+        clearChatButton.style.marginLeft = '10px'; // Basic styling, adjust as needed
+        chatBoxHeader.appendChild(clearChatButton); // Append to header
+        rightSection.appendChild(chatBox);
+        // Chat Box - NEW UI STRUCTURE END
 
 
         // Divider (only for desktop)
@@ -214,21 +215,17 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.innerHTML = '';
         document.body.appendChild(wrapper);
 
-        // Load user avatar if not done
-        if (!userAvatarImage) {
-            loadUserAvatar();
-        }
 
-        // Render existing messages
+        // Render existing messages (adapt to new .chat-logs)
         chatMessages.forEach((msgHTML) => {
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = msgHTML;
             while (tempDiv.firstChild) {
-                chatHistory.appendChild(tempDiv.firstChild);
+                chatLogs.appendChild(tempDiv.firstChild); // Append to chatLogs instead of chatHistory
             }
         });
 
-        // Suggestion Buttons Logic
+        // Suggestion Buttons Logic (No HTML change needed, just ensure selectors are correct later)
         const suggestionPrompts = [
             "Give a simple example for this",
             "Explain it in simple terms",
@@ -244,34 +241,49 @@ document.addEventListener('DOMContentLoaded', function () {
             suggestionsContainer.appendChild(suggestionButton);
 
             suggestionButton.addEventListener('click', function() {
-                messageInput.value = prompt; // Set input value
-                sendButton.click(); // Trigger send
+                messageInput.value = prompt; // Set input value - Selector might need adjustment
+                chatSubmit.click(); // Trigger send using new button ID
             });
         });
 
 
-        // Send button => user message
-        sendButton.addEventListener('click', function () {
-            const userMessage = messageInput.value.trim();
-            if (userMessage) {
-                // Create user bubble
-                const userContainer = document.createElement('div');
-                userContainer.classList.add('user-message-container');
-                // If we have a user avatar
-                if (userAvatarImage) {
-                    const cloneAvatar = userAvatarImage.cloneNode(true);
-                    cloneAvatar.style.marginRight = '8px';
-                    userContainer.appendChild(cloneAvatar);
-                }
-                const userTextNode = document.createTextNode(userMessage);
-                userContainer.appendChild(userTextNode);
-                chatHistory.appendChild(userContainer);
+       // Function to generate and append messages to chat logs
+        function generate_message(msg, type) {
+            let INDEX = Date.now(); // Generate unique ID
+            var str = "";
+            str += "<div id='cm-msg-" + INDEX + "' class=\"chat-msg " + type + "\">";
+            str += " <span class=\"msg-avatar\">";
+            if (type === 'self'){
+                str += ` <img src='${userAvatarImage ? userAvatarImage.src : 'https://collegehive.in/docs/ass/images/download%20-%20Copy.png'}' alt='${userAvatarImage ? userAvatarImage.alt : 'User'}' />`;}
+            else{
+                str += " <img src=\'https://cdn.iconscout.com/icon/free/png-512/free-avatar-370-456322.png?f=webp&w=512' />";}
+            str += " </span>";
+            str += " <div class=\"cm-msg-text\">";
+            str += msg.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
+            str += " </div>";
+            str += " </div>";
+            chatLogs.innerHTML += str; // Append to chatLogs using innerHTML
+            const cmMsg = chatLogs.querySelector(`#cm-msg-${INDEX}`);
+            if (cmMsg) {
+                cmMsg.style.display = 'none'; // Hide initially
+                cmMsg.style.opacity = '0'; // Set opacity to 0
+                cmMsg.style.transition = 'opacity 0.3s ease-in-out, display 0.3s ease-in-out'; // Add transition
+                setTimeout(() => {
+                    cmMsg.style.display = 'flex'; // Change to flex to display
+                    cmMsg.style.opacity = '1'; // Fade in
+                }, 10); // Small delay to allow transitions to work
+            }
+            setTimeout(function() {
+                chatLogs.scrollTop = chatLogs.scrollHeight;
+            }, 100);
+        }
 
-                // Add to chatMessages
-                chatMessages.push(userContainer.outerHTML);
 
-                // Build the custom prompt
-                const customPrompt = `You are Hive Chat, an AI assistant created by CollegeHive, a student community platform founded by Sanjay Bandaru, Aman Thoyaj, and other Christ University students. CollegeHive offers services students need, currently operating Hive Notes (a platform for concise BBA notes based on the Program Course Plan) and a forum.
+        function sendMessageToGemini(message) {
+            conversationHistory.push({ "role": "user", "content": message });
+
+            // *** Custom Prompt (as requested by user) ***
+            const customPrompt = `You are Hive Chat, an AI assistant created by CollegeHive, a student community platform founded by Sanjay Bandaru, Aman Thoyaj, and other Christ University students. CollegeHive offers services students need, currently operating Hive Notes (a platform for concise BBA notes based on the Program Course Plan) and a forum.
 
 Your primary function is to answer user queries helpfully, professionally, politely, and respectfully.
 
@@ -291,12 +303,12 @@ Your primary function is to answer user queries helpfully, professionally, polit
 **Contextual Information:**
 
 * **Hidden Context:** ${hiddenContext} (Use this to understand the current context and any specific instructions on the page.)
-* **Previous Conversation:** ${chatMessages.map(m => m).join('\n')} (Use this to maintain context and avoid repetition.)
+* **Previous Conversation:** ${conversationHistory.map(m => m.content).join('\\n')} (Use this to maintain context and avoid repetition.)
 
-**Current User Input:** ${userMessage}`;
+**Current User Input:** ${message}`;
 
-                // Assistant call (example using fetch)
-                fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite-preview-02-05:generateContent?key=${decodedApiKey}`, { // API Key in URL
+
+            fetch(\`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite-preview-02-05:generateContent?key=\${decodedApiKey}\`, { // API Key in URL
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -317,76 +329,84 @@ Your primary function is to answer user queries helpfully, professionally, polit
                         }
                     })
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        return response.json(); // Expecting JSON response from Gemini
-                    })
-                    .then(data => {
-                        console.log("Gemini API Response:", data); // Log the full response for debugging
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(\`HTTP error! Status: ${response.status}\`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Gemini API Response:", data);
 
-                        // Extract the text from the Gemini API response.
-                        // Assuming the text is in data.candidates[0].content.parts[0].text
-                        const geminiResponseText = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+                    const geminiResponseText = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
 
-                        if (geminiResponseText) {
-                            const assistantContainer = document.createElement('div');
-                            assistantContainer.classList.add('assistant-message-container');
-                            // Add assistant avatar
-                            const assistantAvatar = document.createElement('img');
-                            assistantAvatar.src = assistantAvatarSrc;
-                            assistantAvatar.classList.add('avatar');
-                            assistantAvatar.style.marginRight = '8px';
-                            assistantContainer.appendChild(assistantAvatar);
-                            // Bubble content (render with Marked.js if available)
-                            const botTextDiv = document.createElement('div');
-                            botTextDiv.innerHTML = (window.marked) ? marked.parse(geminiResponseText) : geminiResponseText;
-                            assistantContainer.appendChild(botTextDiv);
-                            chatHistory.appendChild(assistantContainer);
-                            // Save chatMessages.push(assistantContainer.outerHTML);
-                            chatMessages.push(assistantContainer.outerHTML);
-                            sessionStorage.setItem('chatMessages', JSON.stringify(chatMessages));
-                            chatHistory.scrollTop = chatHistory.scrollHeight;
-                        } else {
-                            console.error("No text content found in Gemini API response:", data);
-                            // Handle the case where no text is returned, maybe show an error message in chat
-                            const errorMsg = document.createElement('div');
-                            errorMsg.classList.add('error-message-container');
-                            errorMsg.textContent = 'Hive Chat: No response from AI. Please check console.';
-                            chatHistory.appendChild(errorMsg);
-                            chatMessages.push(errorMsg.outerHTML);
-                            sessionStorage.setItem('chatMessages', JSON.stringify(chatMessages));
-                            chatHistory.scrollTop = chatHistory.scrollHeight;
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error fetching from Gemini API:", error);
-                        // Show error bubble
-                        const errorMsg = document.createElement('div');
-                        errorMsg.classList.add('error-message-container');
-                        errorMsg.textContent = 'Hive Chat: Error fetching response from AI. Please check console.';
-                        chatHistory.appendChild(errorMsg);
-                        chatMessages.push(errorMsg.outerHTML);
-                        sessionStorage.setItem('chatMessages', JSON.stringify(chatMessages));
-                        chatHistory.scrollTop = chatHistory.scrollHeight;
-                    });
+                    if (geminiResponseText) {
+                        conversationHistory.push({ "role": "assistant", "content": geminiResponseText});
+                        generate_message(geminiResponseText, 'reply'); // Use 'reply' type for assistant msg
+                    } else {
+                        console.error("No text content found in Gemini API response:", data);
+                        const errorMsg = 'Hive Chat: No response from AI. Please check console.';
+                        generate_message(errorMsg, 'error'); // Or handle error display as needed
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching from Gemini API:", error);
+                    const errorMsg = 'Hive Chat: Error fetching response from AI. Please check console.';
+                    generate_message(errorMsg, 'error'); // Or handle error display as needed
+                });
+        }
 
-                messageInput.value = '';
-                // Scroll to bottom
-                chatHistory.scrollTop = chatHistory.scrollHeight;
-                // Save updated messages
-                sessionStorage.setItem('chatMessages', JSON.stringify(chatMessages));
+        // Send button => user message (Adapt event listener to #chat-submit and #chat-input)
+        chatSubmit.addEventListener('click', function (e) { // Use chatSubmit here
+            e.preventDefault();
+            var msg = messageInput.value; // Use messageInput here
+            if (msg.trim() === '') {
+                return false;
             }
+            generate_message(msg, 'self'); // Use new generate_message function, type 'self' might need adjustment
+            messageInput.value = ''; // Use messageInput here
+            sendMessageToGemini(msg); // Rename function to sendMessageToGemini
         });
 
-        // Press Enter (no shift) => send message
-        messageInput.addEventListener('keydown', function (e) {
+        // Press Enter (no shift) => send message (Adapt event listener to #chat-input and #chat-submit)
+        messageInput.addEventListener('keydown', function (e) { // Use messageInput here
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                sendButton.click();
+                chatSubmit.click(); // Trigger send using new button ID
             }
         });
+
+        // Clear Chat Button Event Listener (Adapt to #clear-chat)
+        clearChatButton.addEventListener('click', function() { // Use clearChatButton here
+            // Clear the chat messages from the logs except the first log
+            chatLogs.innerHTML = ''; // Clear chatLogs content directly
+            console.log('Chat history cleared');
+            // Optionally reset the conversationHistory if you're tracking the chat state
+            conversationHistory = [
+            {
+                "role": "system",
+                "content": custom_instruction}
+
+            ];
+            // once history is cleared, show the suggestion buttons again
+            conversationHistory.push({ "role": "user", "content": "This is the current page content."+hiddenContext }); // Use hiddenContext
+            suggestionsContainer.style.display = 'flex'; // Show suggestions, adjust display style if needed
+        });
+
+
+        // Chat Toggle Button Event Listener (Adapt to #chat-circle and .chat-box)
+        toggleButton.addEventListener('click', function() { // Use toggleButton (chatCircle) here
+            toggleButton.style.display = 'none'; // Hide chat circle
+            chatBox.style.display = 'block'; // Show chat box
+        });
+
+        // Chat Box Toggle (Close Button) Event Listener (Adapt to .chat-box-toggle and #chat-circle)
+        boxToggle.addEventListener('click', function() { // Use boxToggle here
+            chatBox.style.display = 'none'; // Hide chat box
+            toggleButton.style.display = 'flex'; // Show chat circle
+        });
+
+
     }
 
     // Toggle button click => open the chat
@@ -395,6 +415,9 @@ Your primary function is to answer user queries helpfully, professionally, polit
     // If user had chat open previously, open it automatically
     if (wasChatOpen) {
         toggleButton.click();
+        toggleButton.style.display = 'none'; // Hide toggle button if chat is open
+    } else {
+        toggleButton.style.display = 'flex'; // Or 'block' - ensure toggle button is visible if chat is closed
     }
 });
 
