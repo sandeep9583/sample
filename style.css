@@ -155,7 +155,7 @@
     overflow-y: auto;
     padding: 16px;
     background-color: #FFFFFF;
-    padding-bottom: 70px; /* Add padding to bottom to make space for input on mobile */
+    padding-bottom: 170px; /* Increased padding-bottom for suggestions + input on mobile */
 }
 
 /* Assistant message bubble */
@@ -314,6 +314,7 @@
         position: fixed;
         width: auto;
         background-color: transparent;
+        height: 100vh; /* Revert to full height on desktop if needed */
     }
 
     .right-section {
@@ -326,6 +327,11 @@
     .chat-wrapper {
         position: fixed; /* Keep fixed for overlay on mobile */
         display: flex;
+        top: 0; /* Start from the top */
+        bottom: auto; /* Override bottom: 0; if it was set */
+        height: auto; /* Adjust height to content */
+        max-height: 90vh; /* Limit height to 90% of viewport - adjust as needed */
+        flex-direction: column; /* Stack elements vertically */
     }
 
     .left-section,
@@ -334,13 +340,26 @@
     }
 
     .right-section {
-        flex: 1;
-        height: 100%; /* Ensure right-section takes full height */
+        flex: 1; /* Take remaining space */
+        height: auto; /* Height adjusts to content */
+        max-height: none; /* Remove max-height if set previously */
+        overflow: hidden; /* Prevent right section from overflowing wrapper */
+    }
+
+    .chat-header {
+        margin-bottom: 0; /* Remove extra margin below header on mobile */
     }
 
     .chat-history {
-        padding-bottom: 120px; /* Increased padding-bottom for suggestions + input */
+        padding-bottom: 10px; /* Reduce padding at the bottom of chat history for mobile */
+        overflow-y: auto; /* Keep scroll for chat history */
     }
+
+    .suggestions-container {
+        margin-bottom: 0; /* Remove margin below suggestions */
+        padding: 16px; /* Keep padding for suggestions */
+    }
+
 
     .input-container {
         position: fixed; /* Changed to fixed */
@@ -348,6 +367,7 @@
         left: 0;
         right: 0;
         z-index: 1002; /* Ensure input is above other content */
+        border-top: 1px solid #E0E0E0; /* Keep border for separation */
     }
 }
 
@@ -356,8 +376,9 @@
     display: flex;
     flex-wrap: wrap; /* Allow buttons to wrap to the next line on smaller screens */
     gap: 8px; /* Spacing between buttons */
-    margin-bottom: 10px; /* Space between suggestions and input */
+    margin-bottom: 10px; /* Space between suggestions and input - adjust as needed */
     padding: 0 16px; /* Add horizontal padding to suggestions container */
+    justify-content: flex-start; /* Align buttons to the start */
 }
 
 .suggestion-button {
@@ -376,16 +397,9 @@
     background-color: #512da8; /* Darker purple on hover */
 }
 
-@media (max-width: 768px) { /* Example breakpoint for mobile */
-    .suggestions-container {
-        justify-content: flex-start; /* Align buttons to the start on mobile */
-        padding-left: 16px; /* Keep left padding */
-        padding-right: 16px; /* Keep right padding */
-    }
-}
 
 
-/* ai summmary */
+/* ai summmary - No changes needed here, keeping for completeness */
 .markdown-content p,
 .markdown-content h1,
 .markdown-content h2,
@@ -398,15 +412,14 @@
 .markdown-content li,
 .markdown-content blockquote,
 .markdown-content pre {
-    margin-bottom: 0.5em !important; /* Adjust as needed for desired spacing */
-    margin-top: 0.5em !important;    /* Adjust as needed for desired spacing */
+    margin-bottom: 0.5em !important;
+    margin-top: 0.5em !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
 }
 
-/* If you want less space between list items: */
 .markdown-content li {
-    margin-bottom: 0.2em !important; /* Example: less spacing for list items */
+    margin-bottom: 0.2em !important;
 }
 
 
@@ -433,8 +446,7 @@
   }
 }
 
-    /* We'll apply styles to .info-button once it is created */
-    .info-button {
+    .info-button { /* No changes needed here */
       display: inline-block;
       cursor: pointer;
       margin-left: 0.5rem;
@@ -451,19 +463,17 @@
       transform: scale(1.3);
     }
 
-    .content {
+    .content { /* No changes needed here */
       margin-top: 1rem;
       line-height: 1.5;
     }
 
-    /* Overlay styling */
-    .overlay {
+    .overlay { /* No changes needed here */
       position: fixed;
-      top: 80px; /* offset from top */
+      top: 80px;
       left: 50%;
       transform: translateX(-50%);
       background-color: #fff;
-      /* color: #fff; */
       padding: 1rem;
       border: 1px solid #111;
       border-radius: 5px;
@@ -474,26 +484,24 @@
       opacity: 0;
       transition: opacity 0.3s ease, transform 0.3s ease;
       z-index: 9999;
-
-       /* Add these two lines */
-      height: 75vh;       /* 75% of the viewport height */
-      overflow-y: auto;   /* Scrollbar if content exceeds 75vh */
+      height: 75vh;
+      overflow-y: auto;
     }
 
-    .overlay.show {
+    .overlay.show { /* No changes needed here */
       display: block;
       opacity: 1;
       transform: translate(-50%, 0);
     }
 
-    .overlay-header {
+    .overlay-header { /* No changes needed here */
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 0.5rem;
     }
 
-    .close-button, .copy-button {
+    .close-button, .copy-button { /* No changes needed here */
       background-color: #333;
       border: 1px solid #111;
       color: #fff;
@@ -509,79 +517,57 @@
       background-color: #444;
     }
 
-    /* .markdown-content {
-      margin-top: 1rem;
-      white-space: pre-wrap;
-    }
- */
-    /* Simple animation for fade in */
-    .fade-in {
+
+    .fade-in { /* No changes needed here */
       animation: fadeIn 0.3s ease forwards;
     }
 
-    @keyframes fadeIn {
+    @keyframes fadeIn { /* No changes needed here */
       from { opacity: 0; }
       to { opacity: 1; }
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-website fonts */
+/* website fonts - No changes needed here */
      @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
 
-  /* General Typography */
+
   h1, h2, h3, h4, li, p {
-      /* font-family: 'Comic Neue', sans-serif; */
          font-family: "Charter", serif;
-      color: #292929; /* Default text color for better visibility */
+      color: #292929;
   }
   h1 {
-      font-weight: 300; /* Light font weight for h1 */
-      font-size: 3.5em; /* Adjust size for h1 */
+      font-weight: 300;
+      font-size: 3.5em;
   }
 
   h2 {
       font-weight: 200;
-      font-size: 2em; /* Example size for h2 */
+      font-size: 2em;
   }
 
   h3 {
-      font-size: 1.75em; /* Example size for h3 */
+      font-size: 1.75em;
   }
 
   h4 {
-      font-size: 1.6em; /* Example size for h4 */
+      font-size: 1.6em;
   }
 
-  /* Ensure list font sizes remain consistent */
   ul, ol {
-      font-size: 1em; /* Explicit font-size for list parent */
+      font-size: 1em;
   }
 
   li {
-      font-size: 1.3rem; /* Use rem for consistent sizing relative to root */
+      font-size: 1.3rem;
   }
 
   p {
-      font-size: 1.5em; /* Example size for p */
-      line-height: 1.5; /* Improves readability */
+      font-size: 1.5em;
+      line-height: 1.5;
   }
 
 
-    /* General Dark Mode and Light Mode Colors */
     html.dark-mode body,
     html.dark-mode h1,
     html.dark-mode h2,
@@ -590,26 +576,26 @@ website fonts */
     html.dark-mode li,
     html.dark-mode p {
         font-family: "Charter", serif;
-        color: #FFFFFF !important; /* Light text for dark mode */
+        color: #FFFFFF !important;
     }
 
 
-      /* Default light mode (not dark) */
+      /* Default light mode (not dark) - No changes needed here */
 
     html{
          background-color: #FFFFFF !important;
     }
     html.dark-mode{
-        background-color: #0a0a0a !important; /* Black background for dark mode */
+        background-color: #0a0a0a !important;
     }
     .card {
-        background-color: #ffffff; /* Light gray background for light mode */
+        background-color: #ffffff;
     }
 
     html.dark-mode .card {
-        background-color: #000 !important; /* Black background for dark mode */
+        background-color: #000 !important;
     }
 
     html.dark-mode .grid-card {
-        border-color: #888 !important; /* Subtle border for cards in dark mode */
+        border-color: #888 !important;
     }
