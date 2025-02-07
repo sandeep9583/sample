@@ -1,301 +1,55 @@
-/* ==========================
-
-    Chat Box Styles (New UI CSS)
-
-========================== */
-
-/* Main container for the chat widget */
-.chat-box {
-    position: fixed;
-    right: 20px;
-    bottom: 0px;
-    width: 300px; /* Adjust width as needed */
-    background: #fff;
-    border-radius: 5px 5px 0 0;
-    display: none; /* Initially hidden, toggled by chat circle */
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 1002; /* Ensure it's above other content */
-    font-family: Arial, sans-serif; /* Add font-family */
+/* chat */
+.assistant-message-container {
+    font-size: 13px !important;
 }
 
-/* Mobile adjustments for chat box */
-@media (max-width: 767px) {
-    .chat-box {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 90vh; /* Adjust height as needed for mobile */
-        border-radius: 0; /* No rounded corners on mobile */
-        bottom: auto; /* Override bottom: 0 */
-        max-height: 90vh;
-        overflow: hidden;
-    }
+.dark-mode .user-message-container {
+    background-color: #333;
 }
 
-
-/* Header of the chat box */
-.chat-box-header {
-    background: #f0f0f0; /* Light grey header */
-    padding: 10px 15px;
-    border-radius: 5px 5px 0 0;
-    color: #333;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.dark-mode .assistant-message-container {
+    background-color: #444;
 }
 
-.chat-box-header h4 {
-    margin: 0;
-    font-size: 1.1em;
-    font-weight: bold;
+.dark-mode .input-message {
+    color: #fff;
 }
 
-.chat-box-toggle, .chat-circle {
-    cursor: pointer;
-    color: #666;
-    font-size: 1.5em;
-    transition: color 0.3s ease;
+.dark-mode .chat-history {
+    background-color: #000;
 }
 
-.chat-box-toggle:hover, .chat-circle:hover {
-    color: #333;
+.dark-mode .right-section {
+    background-color: #000;
 }
 
-/* Chat logs (message area) */
-.chat-logs {
-    padding: 15px;
-    overflow-y: auto;
-    height: 300px; /* Default height, adjust as needed */
-    display: flex;
-    flex-direction: column; /* Messages stack from top to bottom */
-    padding-bottom: 170px; /* Increased padding-bottom for suggestions + input on mobile */
+.dark-mode .chat-header {
+    background-color: #333;
 }
 
-/* Mobile adjustment for chat logs height */
-@media (max-width: 767px) {
-    .chat-logs {
-        height: calc(90vh - 120px); /* Adjust based on header and input area height */
-        padding-bottom: 120px; /* Add padding for input visibility on mobile */
-    }
+.dark-mode .input-container {
+    background-color: #333;
 }
 
-/* Individual chat message */
-.chat-msg {
-    margin-bottom: 15px;
-    display: flex;
-    align-items: flex-start; /* Align avatar and text to top */
-    opacity: 0; /* Initially hidden */
-    transform: translateY(10px); /* Start a bit lower */
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-
-.chat-msg.self {
-    justify-content: flex-end; /* Align self-messages to the right */
-    text-align: right;
-}
-
-.msg-avatar {
-    position: relative;
+/* Avatar styling */
+.avatar {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    overflow: hidden;
     margin-right: 10px;
-    margin-top: 2px; /* Align avatar with message text */
+    vertical-align: middle;
 }
-
-.chat-msg.self .msg-avatar {
-    margin-left: 10px;
-    margin-right: 0;
-}
-
-.msg-avatar img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.cm-msg-text {
-    background: #e8e8e8; /* Light grey message background */
-    padding: 10px 15px;
-    border-radius: 20px;
-    word-wrap: break-word;
-    max-width: 70%; /* Limit message width */
-}
-
-.chat-msg.self .cm-msg-text {
-    background: #cce8fe; /* Light blue for self-messages */
-    color: #333;
-}
-
-/* Chat message animations */
-.chat-msg.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-
-/* Chat input area */
-.chat-input-wrapper {
-    background: #fff;
-    padding: 15px;
-    border-top: 1px solid #ddd;
-    display: flex;
-    align-items: center;
-    position: fixed; /* Fixed to bottom for mobile */
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1003; /* Above chat-box */
-    box-sizing: border-box; /* Include padding and border in width/height */
-}
-
-/* Adjust input-wrapper for desktop - remove fixed positioning */
-@media (min-width: 768px) {
-    .chat-input-wrapper {
-        position: relative; /* Revert to relative for desktop */
-        bottom: auto;
-        left: auto;
-        right: auto;
-        z-index: auto;
-    }
-}
-
-
-#chat-input {
-    flex: 1;
-    border: none;
-    padding: 10px;
-    border-radius: 20px;
-    background: #f9f9f9; /* Very light grey input background */
-    margin-right: 10px;
-    resize: none; /* Disable textarea resize */
-    height: auto; /* Adjust height automatically */
-    overflow: hidden; /* Prevent scrollbar from appearing */
-    min-height: 40px; /* Minimum height for input */
-    max-height: 100px; /* Maximum height before scrolling internally */
-    font-size: 16px; /* Match message font-size */
-    line-height: 1.5;
-}
-
-#chat-submit {
-    background: #007bff; /* Blue send button */
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 14px; /* Adjust if needed */
-}
-
-#chat-submit:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-}
-
-/* Chat circle (for toggling chat box visibility) */
-#chat-circle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: #007bff; /* Blue chat circle */
-    color: #fff;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2em;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    z-index: 1001; /* Ensure it's above other content but below chat box */
-}
-
-#chat-circle:hover {
+@keyframes scaleAnimation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
     transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
-
-
-/* Suggestion Buttons Container - Place below chat logs, above input */
-.suggestion-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 15px; /* Match chat-logs padding */
-    padding-bottom: 0; /* Align with input area */
-    justify-content: flex-start; /* Align buttons to the start */
-}
-
-.suggestion-button {
-    background-color: #673ab7;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.3s ease;
-    margin-bottom: 5px; /* Spacing between buttons */
-}
-
-.suggestion-button:hover {
-    background-color: #512da8;
-}
-
-
-/* Dark mode adjustments - if needed, add dark mode specific styles below */
-/* Example dark mode styles (adjust colors as needed) */
-.dark-mode .chat-box {
-    background: #333;
-    color: #fff;
-}
-
-.dark-mode .chat-box-header {
-    background: #444;
-    color: #f0f0f0;
-}
-
-.dark-mode .chat-logs {
-    background: #222;
-}
-
-.dark-mode .cm-msg-text {
-    background: #555;
-    color: #fff;
-}
-
-.dark-mode .chat-msg.self .cm-msg-text {
-    background: #0056b3; /* Darker blue for self in dark mode */
-    color: #fff;
-}
-
-.dark-mode .chat-input-wrapper {
-    background: #333;
-    border-top-color: #555;
-}
-
-.dark-mode #chat-input {
-    background: #444;
-    color: #fff;
-}
-
-.dark-mode #chat-submit {
-    background: #0056b3;
-}
-
-.dark-mode #chat-submit:hover {
-    background-color: #007bff; /* Lighter blue on hover in dark mode */
-}
-
-/* Keep existing styles for avatar, hive-chat-button, summary, math, website fonts, etc. -  refer to previous full CSS code */
-
 /* Hive chat toggle button (floating button) */
 .btn-hive-chat {
     position: fixed;
@@ -393,6 +147,16 @@
     background-color: #CC2E24;
 }
 
+/* Chat history container */
+.chat-history {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 16px;
+    background-color: #FFFFFF;
+    padding-bottom: 70px; /* Add padding to bottom to make space for input on mobile */
+}
 
 /* Assistant message bubble */
 .assistant-message-container {
@@ -550,7 +314,6 @@
         position: fixed;
         width: auto;
         background-color: transparent;
-        height: 100vh; /* Revert to full height on desktop if needed */
     }
 
     .right-section {
@@ -563,11 +326,6 @@
     .chat-wrapper {
         position: fixed; /* Keep fixed for overlay on mobile */
         display: flex;
-        top: 0; /* Start from the top */
-        bottom: auto; /* Override bottom: 0; if it was set */
-        height: auto; /* Adjust height to content */
-        max-height: 90vh; /* Limit height to 90% of viewport - adjust as needed */
-        flex-direction: column; /* Stack elements vertically */
     }
 
     .left-section,
@@ -576,26 +334,13 @@
     }
 
     .right-section {
-        flex: 1; /* Take remaining space */
-        height: auto; /* Height adjusts to content */
-        max-height: none; /* Remove max-height if set previously */
-        overflow: hidden; /* Prevent right section from overflowing wrapper */
-    }
-
-    .chat-header {
-        margin-bottom: 0; /* Remove extra margin below header on mobile */
+        flex: 1;
+        height: 100%; /* Ensure right-section takes full height */
     }
 
     .chat-history {
-        padding-bottom: 10px; /* Reduce padding at the bottom of chat history for mobile */
-        overflow-y: auto; /* Keep scroll for chat history */
+        padding-bottom: 120px; /* Increased padding-bottom for suggestions + input */
     }
-
-    .suggestions-container {
-        margin-bottom: 0; /* Remove margin below suggestions */
-        padding: 16px; /* Keep padding for suggestions */
-    }
-
 
     .input-container {
         position: fixed; /* Changed to fixed */
@@ -603,7 +348,39 @@
         left: 0;
         right: 0;
         z-index: 1002; /* Ensure input is above other content */
-        border-top: 1px solid #E0E0E0; /* Keep border for separation */
+    }
+}
+
+
+.suggestions-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap to the next line on smaller screens */
+    gap: 8px; /* Spacing between buttons */
+    margin-bottom: 10px; /* Space between suggestions and input */
+    padding: 0 16px; /* Add horizontal padding to suggestions container */
+}
+
+.suggestion-button {
+    background-color: #673ab7; /* Example button color (purple) - adjust as needed */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px; /* Rounded buttons */
+    cursor: pointer;
+    font-size: 0.9em; /* Adjust font size if needed */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+    margin-bottom: 5px; /* Add a bit of bottom margin to suggestion buttons */
+}
+
+.suggestion-button:hover {
+    background-color: #512da8; /* Darker purple on hover */
+}
+
+@media (max-width: 768px) { /* Example breakpoint for mobile */
+    .suggestions-container {
+        justify-content: flex-start; /* Align buttons to the start on mobile */
+        padding-left: 16px; /* Keep left padding */
+        padding-right: 16px; /* Keep right padding */
     }
 }
 
@@ -732,7 +509,12 @@
       background-color: #444;
     }
 
-
+    /* .markdown-content {
+      margin-top: 1rem;
+      white-space: pre-wrap;
+    }
+ */
+    /* Simple animation for fade in */
     .fade-in {
       animation: fadeIn 0.3s ease forwards;
     }
@@ -743,46 +525,63 @@
     }
 
 
-/* website fonts */
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+website fonts */
      @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
 
-
+  /* General Typography */
   h1, h2, h3, h4, li, p {
+      /* font-family: 'Comic Neue', sans-serif; */
          font-family: "Charter", serif;
-      color: #292929;
+      color: #292929; /* Default text color for better visibility */
   }
   h1 {
-      font-weight: 300;
-      font-size: 3.5em;
+      font-weight: 300; /* Light font weight for h1 */
+      font-size: 3.5em; /* Adjust size for h1 */
   }
 
   h2 {
       font-weight: 200;
-      font-size: 2em;
+      font-size: 2em; /* Example size for h2 */
   }
 
   h3 {
-      font-size: 1.75em;
+      font-size: 1.75em; /* Example size for h3 */
   }
 
   h4 {
-      font-size: 1.6em;
+      font-size: 1.6em; /* Example size for h4 */
   }
 
+  /* Ensure list font sizes remain consistent */
   ul, ol {
-      font-size: 1em;
+      font-size: 1em; /* Explicit font-size for list parent */
   }
 
   li {
-      font-size: 1.3rem;
+      font-size: 1.3rem; /* Use rem for consistent sizing relative to root */
   }
 
   p {
-      font-size: 1.5em;
-      line-height: 1.5;
+      font-size: 1.5em; /* Example size for p */
+      line-height: 1.5; /* Improves readability */
   }
 
 
+    /* General Dark Mode and Light Mode Colors */
     html.dark-mode body,
     html.dark-mode h1,
     html.dark-mode h2,
@@ -791,7 +590,7 @@
     html.dark-mode li,
     html.dark-mode p {
         font-family: "Charter", serif;
-        color: #FFFFFF !important;
+        color: #FFFFFF !important; /* Light text for dark mode */
     }
 
 
@@ -801,16 +600,16 @@
          background-color: #FFFFFF !important;
     }
     html.dark-mode{
-        background-color: #0a0a0a !important;
+        background-color: #0a0a0a !important; /* Black background for dark mode */
     }
     .card {
-        background-color: #ffffff;
+        background-color: #ffffff; /* Light gray background for light mode */
     }
 
     html.dark-mode .card {
-        background-color: #000 !important;
+        background-color: #000 !important; /* Black background for dark mode */
     }
 
     html.dark-mode .grid-card {
-        border-color: #888 !important;
+        border-color: #888 !important; /* Subtle border for cards in dark mode */
     }
