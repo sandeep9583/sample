@@ -148,6 +148,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const chatHistory = document.createElement('div');
         chatHistory.classList.add('chat-history');
 
+        // Suggestion buttons container
+        const suggestionsContainer = document.createElement('div');
+        suggestionsContainer.classList.add('suggestions-container');
+        rightSection.appendChild(suggestionsContainer); // Add above input container
+
         // Input container
         const inputContainer = document.createElement('div');
         inputContainer.classList.add('input-container');
@@ -165,6 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
         inputContainer.appendChild(sendButton);
         rightSection.appendChild(chatHistory);
         rightSection.appendChild(inputContainer);
+
 
         // Divider (only for desktop)
         const divider = document.createElement('div');
@@ -221,6 +227,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 chatHistory.appendChild(tempDiv.firstChild);
             }
         });
+
+        // Suggestion Buttons Logic
+        const suggestionPrompts = [
+            "Give a simple example for this",
+            "Explain it in simple terms",
+            "Summarize the key points",
+            "What are the benefits?",
+            "How does this work?"
+        ];
+
+        suggestionPrompts.forEach(prompt => {
+            const suggestionButton = document.createElement('button');
+            suggestionButton.textContent = prompt;
+            suggestionButton.classList.add('suggestion-button');
+            suggestionsContainer.appendChild(suggestionButton);
+
+            suggestionButton.addEventListener('click', function() {
+                messageInput.value = prompt; // Set input value
+                sendButton.click(); // Trigger send
+            });
+        });
+
 
         // Send button => user message
         sendButton.addEventListener('click', function () {
