@@ -9,11 +9,10 @@ function hexDecode(hexString) {
     return decodedString;
 }
 
-// Hex encoded API key
-const hexEncodedKeys = ["67736b5f4466586b5a66386c6152796d656f37516e706b66574764796233464d41596c334178346f4e4c6d4c44545276683158466a5a","67736B5F76304B46504A76586564635842694249446B696A5747647962334659684C78355270544F45624436745A4E48546673485674496C","67736B5F6F4E756A6F783447304D394D34746D55797A363257476479623346596A655368664952646E576B6643587A626155703669696F57","67736B5F4569445A64616942493751685333516E59734432574764796233465937784F7A6C76694161743059534544633853794D5A78534F","67736B5F565633464D636F7A575444434F573846384174315747647962334659466662573048504E645A457779794854336B34683350746C"];
-// Decode the API key
-const hexEncodedKey = hexEncodedKeys[Math.floor(Math.random() * hexEncodedKeys.length)];
-const decodedApiKey = hexDecode(hexEncodedKey);
+// Hex encoded Gemini API key
+const geminiHexApiKey = "41497A615379443031414D6c527367427A326344436551674F6953396857724F5054426F686D6F";
+const geminiApiKey = hexDecode(geminiHexApiKey);
+const decodedApiKey = geminiApiKey; // Use Gemini API Key
 
 // chat
 document.addEventListener('DOMContentLoaded', function () {
@@ -269,85 +268,76 @@ Your primary function is to answer user queries helpfully, professionally, polit
 **Current User Input:** ${userMessage}`;
 
                 // Assistant call (example using fetch)
-                fetch('https://api.groq.com/openai/v1/chat/completions', {
+                fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite-preview-02-05:generateContent?key=${decodedApiKey}`, { // API Key in URL
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${decodedApiKey}` // Use decoded API key here
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        "messages": [{
+                        "contents": [{
                             "role": "user",
-                            "content": customPrompt
+                            "parts": [{
+                                "text": customPrompt
+                            }]
                         }],
-                        "model": "llama-3.3-70b-specdec",
-                        "temperature": 1,
-                        "max_tokens": 1024,
-                        "top_p": 1,
-                        "stream": true
+                        "generationConfig": {
+                            "temperature": 1,
+                            "topK": 64, // You can adjust or remove these if needed, these are from your curl example
+                            "topP": 0.95,
+                            "maxOutputTokens": 8192,
+                            "responseMimeType": "text/plain" // Expect plain text, adjust if needed
+                        }
                     })
                 })
                     .then(response => {
                         if (!response.ok) {
                             throw new Error(`HTTP error! Status: ${response.status}`);
                         }
-                        const reader = response.body.getReader();
-                        let textBuffer = '';
-                        const processStream = () => {
-                            reader.read().then(({
-                                done,
-                                value
-                            }) => {
-                                if (done) {
-                                    // Stream done => finalize assistant bubble
-                                    if (textBuffer) {
-                                        const assistantContainer = document.createElement('div');
-                                        assistantContainer.classList.add('assistant-message-container');
-                                        // Add assistant avatar
-                                        const assistantAvatar = document.createElement('img');
-                                        assistantAvatar.src = assistantAvatarSrc;
-                                        assistantAvatar.classList.add('avatar');
-                                        assistantAvatar.style.marginRight = '8px';
-                                        assistantContainer.appendChild(assistantAvatar);
-                                        // Bubble content (render with Marked.js if available)
-                                        const botTextDiv = document.createElement('div');
-                                        botTextDiv.innerHTML = (window.marked) ? marked.parse(textBuffer) : textBuffer;
-                                        assistantContainer.appendChild(botTextDiv);
-                                        chatHistory.appendChild(assistantContainer);
-                                        // Save chatMessages.push(assistantContainer.outerHTML);
-                                        chatMessages.push(assistantContainer.outerHTML);
-                                        sessionStorage.setItem('chatMessages', JSON.stringify(chatMessages));
-                                        chatHistory.scrollTop = chatHistory.scrollHeight;
-                                    }
-                                    return;
-                                }
-                                // Handle chunk
-                                const textChunk = new TextDecoder().decode(value);
-                                try {
-                                    const lines = textChunk.split('\n').filter(line => line.trim() !== '');
-                                    for (const line of lines) {
-                                        if (line.startsWith('data:')) {
-                                            const jsonPart = line.substring(5).trim();
-                                            const parsed = JSON.parse(jsonPart);
-                                            if (parsed.choices && parsed.choices[0] && parsed.choices[0].delta && parsed.choices[0].delta.content) {
-                                                textBuffer += parsed.choices[0].delta.content;
-                                            }
-                                        }
-                                    }
-                                } catch (e) {
-                                    console.error("Error parsing JSON chunk:", e, textChunk);
-                                }
-                                processStream();
-                            });
-                        };
-                        processStream();
+                        return response.json(); // Expecting JSON response from Gemini
+                    })
+                    .then(data => {
+                        console.log("Gemini API Response:", data); // Log the full response for debugging
+
+                        // Extract the text from the Gemini API response.
+                        // Assuming the text is in data.candidates[0].content.parts[0].text
+                        const geminiResponseText = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+
+                        if (geminiResponseText) {
+                            const assistantContainer = document.createElement('div');
+                            assistantContainer.classList.add('assistant-message-container');
+                            // Add assistant avatar
+                            const assistantAvatar = document.createElement('img');
+                            assistantAvatar.src = assistantAvatarSrc;
+                            assistantAvatar.classList.add('avatar');
+                            assistantAvatar.style.marginRight = '8px';
+                            assistantContainer.appendChild(assistantAvatar);
+                            // Bubble content (render with Marked.js if available)
+                            const botTextDiv = document.createElement('div');
+                            botTextDiv.innerHTML = (window.marked) ? marked.parse(geminiResponseText) : geminiResponseText;
+                            assistantContainer.appendChild(botTextDiv);
+                            chatHistory.appendChild(assistantContainer);
+                            // Save chatMessages.push(assistantContainer.outerHTML);
+                            chatMessages.push(assistantContainer.outerHTML);
+                            sessionStorage.setItem('chatMessages', JSON.stringify(chatMessages));
+                            chatHistory.scrollTop = chatHistory.scrollHeight;
+                        } else {
+                            console.error("No text content found in Gemini API response:", data);
+                            // Handle the case where no text is returned, maybe show an error message in chat
+                            const errorMsg = document.createElement('div');
+                            errorMsg.classList.add('error-message-container');
+                            errorMsg.textContent = 'Hive Chat: No response from AI. Please check console.';
+                            chatHistory.appendChild(errorMsg);
+                            chatMessages.push(errorMsg.outerHTML);
+                            sessionStorage.setItem('chatMessages', JSON.stringify(chatMessages));
+                            chatHistory.scrollTop = chatHistory.scrollHeight;
+                        }
                     })
                     .catch(error => {
-                        console.error("Error fetching from Groq API:", error);
+                        console.error("Error fetching from Gemini API:", error);
                         // Show error bubble
                         const errorMsg = document.createElement('div');
                         errorMsg.classList.add('error-message-container');
-                        errorMsg.textContent = 'Hive Chat: Error fetching response. Please check console.';
+                        errorMsg.textContent = 'Hive Chat: Error fetching response from AI. Please check console.';
                         chatHistory.appendChild(errorMsg);
                         chatMessages.push(errorMsg.outerHTML);
                         sessionStorage.setItem('chatMessages', JSON.stringify(chatMessages));
@@ -574,65 +564,43 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         try {
-            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite-preview-02-05:generateContent?key=${decodedApiKey}`, { // API Key in URL
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${decodedApiKey}` // Use decoded API key here
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    "messages": [
-                        {
-                            "role": "user",
-                            "content": customPrompt
-                        }
-                    ],
-                    "model": "llama-3.3-70b-specdec",
-                    "temperature": 1,
-                    "max_tokens": 1024,
-                    "top_p": 1,
-                    "stream": true
+                    "contents": [{
+                        "role": "user",
+                        "parts": [{
+                            "text": customPrompt
+                        }]
+                    }],
+                    "generationConfig": {
+                        "temperature": 1,
+                        "topK": 64, // Adjust or remove if needed
+                        "topP": 0.95,
+                        "maxOutputTokens": 1024, // Reduced max_tokens for summary, adjust if needed
+                        "responseMimeType": "text/plain"
+                    }
                 })
             });
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder('utf-8');
+            const data = await response.json(); // Parse JSON response
+            console.log("Gemini Summary API Response:", data); // Log full response for debugging
 
-            // SSE-like streaming loop
-            while (true) {
-                const {
-                    done,
-                    value
-                } = await reader.read();
-                if (done) break;
+            // Extract text from Gemini response (same path as chat)
+            const geminiSummaryText = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
 
-                const chunk = decoder.decode(value, {
-                    stream: true
-                });
-                const lines = chunk.split('\n');
-
-                for (const line of lines) {
-                    if (!line.trim() || !line.startsWith('data: ')) continue;
-                    if (line.includes('[DONE]')) break;
-
-                    try {
-                        const jsonStr = line.substring('data: '.length).trim();
-                        const json = JSON.parse(jsonStr);
-
-                        // If there's text content in choices, append it
-                        if (json.choices && json.choices[0] && json.choices[0].delta) {
-                            const contentPart = json.choices[0].delta.content;
-                            if (contentPart) {
-                                resultText += contentPart;
-                                // Render on the fly
-                                markdownContent.innerHTML = marked.parse(resultText);
-                            }
-                        }
-                    } catch (e) {
-                        console.error("JSON parse error", e, line);
-                    }
-                }
+            if (geminiSummaryText) {
+                resultText = geminiSummaryText; // Set resultText directly
+                markdownContent.innerHTML = marked.parse(resultText); // Render markdown
+            } else {
+                console.error("No text content found in Gemini Summary API response:", data);
+                markdownContent.innerHTML = '<p style="color:red;">Error: No summary response from AI.</p>';
             }
+
+
         } catch (error) {
             console.error('Error fetching data:', error);
             markdownContent.innerHTML = '<p style="color:red;">Error fetching data.</p>';
