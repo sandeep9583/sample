@@ -1,3 +1,21 @@
+/* Reader*/
+.highlight { background-color: yellow; }
+        .clickable { cursor: pointer; }
+        .tts-controls {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .tts-controls button {
+            margin-right: 10px;
+            padding: 5px 10px;
+        }
+        .tts-controls label {
+            margin: 0 10px;
+        }
+
+
 /* chat */
 .assistant-message-container {
     font-size: 13px !important;
