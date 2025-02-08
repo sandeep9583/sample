@@ -158,7 +158,7 @@ let isEdge = /Edg\//.test(navigator.userAgent);
 
         if (isEdge) {
             speechSynthesis.onvoiceschanged = loadEdgeVoice;
-            initializeContent('content-wrap');
+            initializeContent('page-content');
         }
 
 
