@@ -1,6 +1,5 @@
 // Reader
 
-
 let isEdge = /Edg\//.test(navigator.userAgent);
         let utterance = new SpeechSynthesisUtterance();
         let allWords = [];
@@ -9,38 +8,31 @@ let isEdge = /Edg\//.test(navigator.userAgent);
         let isPaused = false;
         let mainContainer;
 
-        function createControls() {
-            const controls = document.createElement('div');
-            controls.className = 'tts-controls';
-            
+        function loadEdgeVoice() {
+            let voices = speechSynthesis.getVoices();
+            let edgeVoice = voices.find(voice => voice.name === "Microsoft Emma Online (Natural) - English (United States)");
+            if (edgeVoice) utterance.voice = edgeVoice;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            if (!isEdge) return;
+            speechSynthesis.onvoiceschanged = loadEdgeVoice;
+
+            let pageContent = document.querySelector(".page-content");
+            if (!pageContent) return;
+
+            let controls = document.createElement("div");
+            controls.className = "tts-controls";
             controls.innerHTML = `
                 <button onclick="togglePlayPause()">▶️ Play/Pause</button>
                 <button onclick="stopSpeech()">⏹ Stop</button>
                 <label for="speed">Speed:</label>
                 <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1" onchange="changeSpeed(this.value)">
             `;
-            
-            // Insert after main container
-            mainContainer.parentNode.insertBefore(controls, mainContainer.nextSibling);
-        }
 
-        function getAllTextNodes(element) {
-            let textNodes = [];
-            
-            function getTextNodes(node) {
-                if (node.nodeType === 3) {
-                    let text = node.textContent.trim();
-                    if (text) textNodes.push(node);
-                } else {
-                    for (let child of node.childNodes) {
-                        getTextNodes(child);
-                    }
-                }
-            }
-            
-            getTextNodes(element);
-            return textNodes;
-        }
+            pageContent.insertAdjacentElement("afterend", controls);
+            initializeContent("page-content");
+        });
 
         function initializeContent(containerClass) {
             mainContainer = document.querySelector('.' + containerClass);
@@ -54,9 +46,9 @@ let isEdge = /Edg\//.test(navigator.userAgent);
                 let parent = textNode.parentNode;
                 let text = textNode.textContent.trim();
                 let words = text.split(/\s+/).filter(word => word.length > 0);
-                
+
                 let fragment = document.createDocumentFragment();
-                
+
                 words.forEach(word => {
                     let span = document.createElement('span');
                     span.textContent = word + ' ';
@@ -74,19 +66,22 @@ let isEdge = /Edg\//.test(navigator.userAgent);
 
                 parent.replaceChild(fragment, textNode);
             });
-
-            mainContainer.classList.add('clickable');
-
-            // Create controls if Edge browser
-            if (isEdge) {
-                createControls();
-            }
         }
 
-        function loadEdgeVoice() {
-            let voices = speechSynthesis.getVoices();
-            let edgeVoice = voices.find(voice => voice.name === "Microsoft Emma Online (Natural) - English (United States)");
-            if (edgeVoice) utterance.voice = edgeVoice;
+        function getAllTextNodes(element) {
+            let textNodes = [];
+            function getTextNodes(node) {
+                if (node.nodeType === 3) {
+                    let text = node.textContent.trim();
+                    if (text) textNodes.push(node);
+                } else {
+                    for (let child of node.childNodes) {
+                        getTextNodes(child);
+                    }
+                }
+            }
+            getTextNodes(element);
+            return textNodes;
         }
 
         function startSpeakingFromIndex(startIndex) {
@@ -147,18 +142,12 @@ let isEdge = /Edg\//.test(navigator.userAgent);
         function changeSpeed(value) {
             let wasPlaying = speechSynthesis.speaking && !isPaused;
             utterance.rate = value;
-            
             if (wasPlaying) {
                 let currentPosition = currentWordIndex;
                 speechSynthesis.cancel();
                 currentWordIndex = currentPosition;
                 speakText();
             }
-        }
-
-        if (isEdge) {
-            speechSynthesis.onvoiceschanged = loadEdgeVoice;
-            initializeContent('page-content');
         }
 
 
