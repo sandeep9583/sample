@@ -1,3 +1,173 @@
+// Reader
+
+
+let isEdge = /Edg\//.test(navigator.userAgent);
+        let utterance = new SpeechSynthesisUtterance();
+        let allWords = [];
+        let allWordElements = [];
+        let currentWordIndex = 0;
+        let isPaused = false;
+        let mainContainer;
+
+        function createControls() {
+            const controls = document.createElement('div');
+            controls.className = 'tts-controls';
+            
+            controls.innerHTML = `
+                <button onclick="togglePlayPause()">▶️ Play/Pause</button>
+                <button onclick="stopSpeech()">⏹ Stop</button>
+                <label for="speed">Speed:</label>
+                <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1" onchange="changeSpeed(this.value)">
+            `;
+            
+            // Insert after main container
+            mainContainer.parentNode.insertBefore(controls, mainContainer.nextSibling);
+        }
+
+        function getAllTextNodes(element) {
+            let textNodes = [];
+            
+            function getTextNodes(node) {
+                if (node.nodeType === 3) {
+                    let text = node.textContent.trim();
+                    if (text) textNodes.push(node);
+                } else {
+                    for (let child of node.childNodes) {
+                        getTextNodes(child);
+                    }
+                }
+            }
+            
+            getTextNodes(element);
+            return textNodes;
+        }
+
+        function initializeContent(containerClass) {
+            mainContainer = document.querySelector('.' + containerClass);
+            if (!mainContainer) return;
+
+            let textNodes = getAllTextNodes(mainContainer);
+            allWords = [];
+            allWordElements = [];
+
+            textNodes.forEach(textNode => {
+                let parent = textNode.parentNode;
+                let text = textNode.textContent.trim();
+                let words = text.split(/\s+/).filter(word => word.length > 0);
+                
+                let fragment = document.createDocumentFragment();
+                
+                words.forEach(word => {
+                    let span = document.createElement('span');
+                    span.textContent = word + ' ';
+                    span.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        let index = allWordElements.indexOf(span);
+                        if (index !== -1) {
+                            startSpeakingFromIndex(index);
+                        }
+                    });
+                    fragment.appendChild(span);
+                    allWordElements.push(span);
+                    allWords.push(word);
+                });
+
+                parent.replaceChild(fragment, textNode);
+            });
+
+            mainContainer.classList.add('clickable');
+
+            // Create controls if Edge browser
+            if (isEdge) {
+                createControls();
+            }
+        }
+
+        function loadEdgeVoice() {
+            let voices = speechSynthesis.getVoices();
+            let edgeVoice = voices.find(voice => voice.name === "Microsoft Emma Online (Natural) - English (United States)");
+            if (edgeVoice) utterance.voice = edgeVoice;
+        }
+
+        function startSpeakingFromIndex(startIndex) {
+            isPaused = false;
+            currentWordIndex = startIndex;
+            speakText();
+        }
+
+        function speakText() {
+            if (isPaused) {
+                isPaused = false;
+                speechSynthesis.resume();
+                return;
+            }
+
+            utterance.text = allWords.slice(currentWordIndex).join(' ');
+            utterance.rate = document.getElementById('speed').value;
+
+            utterance.onboundary = (event) => {
+                if (event.name === 'word') {
+                    highlightWord(currentWordIndex);
+                    currentWordIndex++;
+                }
+            };
+
+            utterance.onend = () => {
+                allWordElements.forEach(span => span.classList.remove('highlight'));
+            };
+
+            speechSynthesis.cancel();
+            speechSynthesis.speak(utterance);
+        }
+
+        function highlightWord(index) {
+            allWordElements.forEach(span => span.classList.remove('highlight'));
+            if (allWordElements[index]) {
+                allWordElements[index].classList.add('highlight');
+                allWordElements[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function togglePlayPause() {
+            if (speechSynthesis.speaking && !isPaused) {
+                speechSynthesis.pause();
+                isPaused = true;
+            } else {
+                speakText();
+            }
+        }
+
+        function stopSpeech() {
+            speechSynthesis.cancel();
+            allWordElements.forEach(span => span.classList.remove('highlight'));
+            isPaused = false;
+            currentWordIndex = 0;
+        }
+
+        function changeSpeed(value) {
+            let wasPlaying = speechSynthesis.speaking && !isPaused;
+            utterance.rate = value;
+            
+            if (wasPlaying) {
+                let currentPosition = currentWordIndex;
+                speechSynthesis.cancel();
+                currentWordIndex = currentPosition;
+                speakText();
+            }
+        }
+
+        if (isEdge) {
+            speechSynthesis.onvoiceschanged = loadEdgeVoice;
+            initializeContent('mainContent');
+        }
+
+
+
+
+
+
+
+
 // Hex decoding function (place this outside or at the top of your script)
 function hexDecode(hexString) {
     let decodedString = '';
@@ -447,73 +617,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-
-// // music
-// document.addEventListener("DOMContentLoaded", function () {
-//     // 1. Find the container and the reference (Settings link)
-//     const linksContainer = document.querySelector(".links.text-center");
-//     const settingsLink = document.querySelector('a[data-shortcut="settings_view"]');
-
-//     // 2. Create the Music button (a tag) entirely via JavaScript
-//     const musicLink = document.createElement("a");
-//     musicLink.href = "#";
-//     musicLink.id = "musicButton";
-//     musicLink.setAttribute("data-shortcut", "music_toggle");
-//     // Insert the SVG icon + text
-//     musicLink.innerHTML = `
-//       <svg class="svg-icon" data-icon="music" role="presentation"
-//            xmlns="http://www.w3.org/2000/svg"
-//            viewBox="0 0 24 24">
-//         <path d="M9 19V5l12-2v14"
-//               fill="none"
-//               stroke="currentColor"
-//               stroke-width="2"></path>
-//         <circle cx="6" cy="18" r="3" fill="currentColor"></circle>
-//         <circle cx="18" cy="16" r="3" fill="currentColor"></circle>
-//       </svg>
-//       Music
-//     `;
-
-//     // 3. Insert the Music button just before the Settings link
-//     linksContainer.insertBefore(musicLink, settingsLink);
-
-//     // 4. Create a hidden audio element with a sample MP3 URL
-//     const audioElement = document.createElement("audio");
-//     audioElement.id = "bgMusic";
-//     audioElement.loop = true;
-
-//     const sourceElement = document.createElement("source");
-//     // You can replace this URL with your own music file
-//     sourceElement.src = "https://sandeep9583.github.io/sample/Restful%20Rainfall.mp3";
-//     sourceElement.type = "audio/mpeg";
-
-//     audioElement.appendChild(sourceElement);
-//     document.body.appendChild(audioElement);
-
-//     // 5. Retrieve existing music state from sessionStorage or default to 'stopped'
-//     let musicState = sessionStorage.getItem('musicState') || 'stopped';
-
-//     // 6. If previous state was 'playing', start music on page load
-//     if (musicState === 'playing') {
-//         audioElement.play().catch(err => console.log(err));
-//     }
-
-//     // 7. Add click event to toggle music on/off
-//     musicLink.addEventListener("click", function (event) {
-//         event.preventDefault();
-//         if (musicState === 'playing') {
-//             // Pause music
-//             audioElement.pause();
-//             musicState = 'stopped';
-//             sessionStorage.setItem('musicState', 'stopped');
-//         } else {
-//             // Play music
-//             audioElement.play().catch(err => console.log(err));
-//             musicState = 'playing';
-//             sessionStorage.setItem('musicState', 'playing');
-//         }
-//     });
-// });
 
 
 // summary
