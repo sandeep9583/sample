@@ -1,5 +1,4 @@
 // Reader
-
 let isEdge = /Edg\//.test(navigator.userAgent);
         let utterance = new SpeechSynthesisUtterance();
         let allWords = [];
@@ -15,11 +14,12 @@ let isEdge = /Edg\//.test(navigator.userAgent);
         }
 
         document.addEventListener("DOMContentLoaded", function() {
-            if (!isEdge) return;
-            speechSynthesis.onvoiceschanged = loadEdgeVoice;
+            if (!isEdge) {
+<!--                document.body.innerHTML = '<div style="text-align: center; padding: 20px;">This feature is only available in Microsoft Edge browser.</div>';-->
+                return;
+            }
 
-            let pageContent = document.querySelector(".page-content");
-            if (!pageContent) return;
+            speechSynthesis.onvoiceschanged = loadEdgeVoice;
 
             let controls = document.createElement("div");
             controls.className = "tts-controls";
@@ -30,7 +30,7 @@ let isEdge = /Edg\//.test(navigator.userAgent);
                 <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1" onchange="changeSpeed(this.value)">
             `;
 
-            pageContent.insertAdjacentElement("afterend", controls);
+            document.body.appendChild(controls);
             initializeContent("page-content");
         });
 
