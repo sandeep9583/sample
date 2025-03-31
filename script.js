@@ -427,7 +427,7 @@ Your primary function is to answer user queries helpfully, professionally, polit
 **Current User Input:** ${userMessage}`;
 
                 // Assistant call (example using fetch)
-                fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite-preview-02-05:generateContent?key=${decodedApiKey}`, { // API Key in URL
+                fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${decodedApiKey}`, { // API Key in URL
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -733,7 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite-preview-02-05:generateContent?key=${decodedApiKey}`, { // API Key in URL
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${decodedApiKey}`, { // API Key in URL
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
