@@ -1,154 +1,154 @@
-// Reader
-let isEdge = /Edg\//.test(navigator.userAgent);
-        let utterance = new SpeechSynthesisUtterance();
-        let allWords = [];
-        let allWordElements = [];
-        let currentWordIndex = 0;
-        let isPaused = false;
-        let mainContainer;
+// // Reader
+// let isEdge = /Edg\//.test(navigator.userAgent);
+//         let utterance = new SpeechSynthesisUtterance();
+//         let allWords = [];
+//         let allWordElements = [];
+//         let currentWordIndex = 0;
+//         let isPaused = false;
+//         let mainContainer;
 
-        function loadEdgeVoice() {
-            let voices = speechSynthesis.getVoices();
-            let edgeVoice = voices.find(voice => voice.name === "Microsoft Emma Online (Natural) - English (United States)");
-            if (edgeVoice) utterance.voice = edgeVoice;
-        }
+//         function loadEdgeVoice() {
+//             let voices = speechSynthesis.getVoices();
+//             let edgeVoice = voices.find(voice => voice.name === "Microsoft Emma Online (Natural) - English (United States)");
+//             if (edgeVoice) utterance.voice = edgeVoice;
+//         }
 
-        document.addEventListener("DOMContentLoaded", function() {
-            if (!isEdge) {
-<!--                document.body.innerHTML = '<div style="text-align: center; padding: 20px;">This feature is only available in Microsoft Edge browser.</div>';-->
-                return;
-            }
+//         document.addEventListener("DOMContentLoaded", function() {
+//             if (!isEdge) {
+// <!--                document.body.innerHTML = '<div style="text-align: center; padding: 20px;">This feature is only available in Microsoft Edge browser.</div>';-->
+//                 return;
+//             }
 
-            speechSynthesis.onvoiceschanged = loadEdgeVoice;
+//             speechSynthesis.onvoiceschanged = loadEdgeVoice;
 
-            let controls = document.createElement("div");
-            controls.className = "tts-controls";
-            controls.innerHTML = `
-                <button onclick="togglePlayPause()">▶️ Play/Pause</button>
-                <button onclick="stopSpeech()">⏹ Stop</button>
-                <label for="speed">Speed:</label>
-                <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1" onchange="changeSpeed(this.value)">
-            `;
+//             let controls = document.createElement("div");
+//             controls.className = "tts-controls";
+//             controls.innerHTML = `
+//                 <button onclick="togglePlayPause()">▶️ Play/Pause</button>
+//                 <button onclick="stopSpeech()">⏹ Stop</button>
+//                 <label for="speed">Speed:</label>
+//                 <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1" onchange="changeSpeed(this.value)">
+//             `;
 
-            document.body.appendChild(controls);
-            initializeContent("page-content");
-        });
+//             document.body.appendChild(controls);
+//             initializeContent("page-content");
+//         });
 
-        function initializeContent(containerClass) {
-            mainContainer = document.querySelector('.' + containerClass);
-            if (!mainContainer) return;
+//         function initializeContent(containerClass) {
+//             mainContainer = document.querySelector('.' + containerClass);
+//             if (!mainContainer) return;
 
-            let textNodes = getAllTextNodes(mainContainer);
-            allWords = [];
-            allWordElements = [];
+//             let textNodes = getAllTextNodes(mainContainer);
+//             allWords = [];
+//             allWordElements = [];
 
-            textNodes.forEach(textNode => {
-                let parent = textNode.parentNode;
-                let text = textNode.textContent.trim();
-                let words = text.split(/\s+/).filter(word => word.length > 0);
+//             textNodes.forEach(textNode => {
+//                 let parent = textNode.parentNode;
+//                 let text = textNode.textContent.trim();
+//                 let words = text.split(/\s+/).filter(word => word.length > 0);
 
-                let fragment = document.createDocumentFragment();
+//                 let fragment = document.createDocumentFragment();
 
-                words.forEach(word => {
-                    let span = document.createElement('span');
-                    span.textContent = word + ' ';
-                    span.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        let index = allWordElements.indexOf(span);
-                        if (index !== -1) {
-                            startSpeakingFromIndex(index);
-                        }
-                    });
-                    fragment.appendChild(span);
-                    allWordElements.push(span);
-                    allWords.push(word);
-                });
+//                 words.forEach(word => {
+//                     let span = document.createElement('span');
+//                     span.textContent = word + ' ';
+//                     span.addEventListener('click', (e) => {
+//                         e.stopPropagation();
+//                         let index = allWordElements.indexOf(span);
+//                         if (index !== -1) {
+//                             startSpeakingFromIndex(index);
+//                         }
+//                     });
+//                     fragment.appendChild(span);
+//                     allWordElements.push(span);
+//                     allWords.push(word);
+//                 });
 
-                parent.replaceChild(fragment, textNode);
-            });
-        }
+//                 parent.replaceChild(fragment, textNode);
+//             });
+//         }
 
-        function getAllTextNodes(element) {
-            let textNodes = [];
-            function getTextNodes(node) {
-                if (node.nodeType === 3) {
-                    let text = node.textContent.trim();
-                    if (text) textNodes.push(node);
-                } else {
-                    for (let child of node.childNodes) {
-                        getTextNodes(child);
-                    }
-                }
-            }
-            getTextNodes(element);
-            return textNodes;
-        }
+//         function getAllTextNodes(element) {
+//             let textNodes = [];
+//             function getTextNodes(node) {
+//                 if (node.nodeType === 3) {
+//                     let text = node.textContent.trim();
+//                     if (text) textNodes.push(node);
+//                 } else {
+//                     for (let child of node.childNodes) {
+//                         getTextNodes(child);
+//                     }
+//                 }
+//             }
+//             getTextNodes(element);
+//             return textNodes;
+//         }
 
-        function startSpeakingFromIndex(startIndex) {
-            isPaused = false;
-            currentWordIndex = startIndex;
-            speakText();
-        }
+//         function startSpeakingFromIndex(startIndex) {
+//             isPaused = false;
+//             currentWordIndex = startIndex;
+//             speakText();
+//         }
 
-        function speakText() {
-            if (isPaused) {
-                isPaused = false;
-                speechSynthesis.resume();
-                return;
-            }
+//         function speakText() {
+//             if (isPaused) {
+//                 isPaused = false;
+//                 speechSynthesis.resume();
+//                 return;
+//             }
 
-            utterance.text = allWords.slice(currentWordIndex).join(' ');
-            utterance.rate = document.getElementById('speed').value;
+//             utterance.text = allWords.slice(currentWordIndex).join(' ');
+//             utterance.rate = document.getElementById('speed').value;
 
-            utterance.onboundary = (event) => {
-                if (event.name === 'word') {
-                    highlightWord(currentWordIndex);
-                    currentWordIndex++;
-                }
-            };
+//             utterance.onboundary = (event) => {
+//                 if (event.name === 'word') {
+//                     highlightWord(currentWordIndex);
+//                     currentWordIndex++;
+//                 }
+//             };
 
-            utterance.onend = () => {
-                allWordElements.forEach(span => span.classList.remove('highlight'));
-            };
+//             utterance.onend = () => {
+//                 allWordElements.forEach(span => span.classList.remove('highlight'));
+//             };
 
-            speechSynthesis.cancel();
-            speechSynthesis.speak(utterance);
-        }
+//             speechSynthesis.cancel();
+//             speechSynthesis.speak(utterance);
+//         }
 
-        function highlightWord(index) {
-            allWordElements.forEach(span => span.classList.remove('highlight'));
-            if (allWordElements[index]) {
-                allWordElements[index].classList.add('highlight');
-                allWordElements[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
+//         function highlightWord(index) {
+//             allWordElements.forEach(span => span.classList.remove('highlight'));
+//             if (allWordElements[index]) {
+//                 allWordElements[index].classList.add('highlight');
+//                 allWordElements[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+//             }
+//         }
 
-        function togglePlayPause() {
-            if (speechSynthesis.speaking && !isPaused) {
-                speechSynthesis.pause();
-                isPaused = true;
-            } else {
-                speakText();
-            }
-        }
+//         function togglePlayPause() {
+//             if (speechSynthesis.speaking && !isPaused) {
+//                 speechSynthesis.pause();
+//                 isPaused = true;
+//             } else {
+//                 speakText();
+//             }
+//         }
 
-        function stopSpeech() {
-            speechSynthesis.cancel();
-            allWordElements.forEach(span => span.classList.remove('highlight'));
-            isPaused = false;
-            currentWordIndex = 0;
-        }
+//         function stopSpeech() {
+//             speechSynthesis.cancel();
+//             allWordElements.forEach(span => span.classList.remove('highlight'));
+//             isPaused = false;
+//             currentWordIndex = 0;
+//         }
 
-        function changeSpeed(value) {
-            let wasPlaying = speechSynthesis.speaking && !isPaused;
-            utterance.rate = value;
-            if (wasPlaying) {
-                let currentPosition = currentWordIndex;
-                speechSynthesis.cancel();
-                currentWordIndex = currentPosition;
-                speakText();
-            }
-        }
+//         function changeSpeed(value) {
+//             let wasPlaying = speechSynthesis.speaking && !isPaused;
+//             utterance.rate = value;
+//             if (wasPlaying) {
+//                 let currentPosition = currentWordIndex;
+//                 speechSynthesis.cancel();
+//                 currentWordIndex = currentPosition;
+//                 speakText();
+//             }
+//         }
 
 
 
