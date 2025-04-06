@@ -169,7 +169,7 @@ function hexDecode(hexString) {
 }
 
 // Hex encoded Gemini API key
-const geminiHexApiKey = "41497A615379443031414D6c527367427A326344436551674F6953396857724F5054426F686D6F";
+const geminiHexApiKey = "41497a61537941467a37366d424e315a667a6d3754667068543151634c4d2d4c70706443763745";
 const geminiApiKey = hexDecode(geminiHexApiKey);
 const decodedApiKey = geminiApiKey; // Use Gemini API Key
 
