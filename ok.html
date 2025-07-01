@@ -1,0 +1,472 @@
+
+<!-- ======================================================= -->
+<!-- ============= DEPENDENCIES START ====================== -->
+<!-- ======================================================= -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+<!-- ======================================================= -->
+<!-- ============== DEPENDENCIES END ======================= -->
+<!-- ======================================================= -->
+
+
+<style>
+/* ======================================================= */
+/* ============== CHATBOT STYLES START =================== */
+/* ======================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    --chat-primary-color: #5A5EB9;
+    --chat-primary-light: #7a7fe3;
+    --chat-font-color: #333;
+    --chat-bubble-user-bg: #E3E5FF;
+    --chat-bubble-bot-bg: #FFFFFF;
+    --chat-border-radius-md: 16px;
+    --chat-border-radius-lg: 20px;
+}
+
+/* --- The Launcher Button --- */
+#hive-launcher {
+    position: fixed; bottom: 20px; right: 20px; background-color: var(--chat-primary-color);
+    color: white; border: none; border-radius: 9999px; padding: 12px 20px;
+    display: flex; align-items: center; gap: 10px; font-family: 'Inter', sans-serif;
+    font-size: 16px; font-weight: 500; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 1000;
+}
+#hive-launcher:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); }
+
+/* --- The Chatbox Container --- */
+#hive-chatbox {
+    position: fixed; bottom: 20px; right: 20px; width: 400px;
+    max-width: 90vw; height: 70vh; max-height: 650px;
+    border-radius: var(--chat-border-radius-lg); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex; flex-direction: column; overflow: hidden; z-index: 1001;
+    font-family: 'Inter', sans-serif; opacity: 0;
+    transform: scale(0.95) translateY(10px); transform-origin: bottom right;
+}
+
+/* --- Chatbox Header --- */
+.chat-header {
+    padding: 1rem 1.25rem; border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-shrink: 0;
+}
+.chat-header h3 { margin: 0; font-size: 1.1rem; font-weight: 600; color: var(--chat-font-color); }
+.header-buttons { display: flex; align-items: center; gap: 8px; }
+.header-btn {
+    background: none; border: none; cursor: pointer; padding: 4px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: background-color 0.2s; color: #555;
+}
+.header-btn:hover { background-color: rgba(0, 0, 0, 0.1); color: #000; }
+
+/* --- Chat Logs & Messages --- */
+#chat-logs {
+    flex-grow: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 1rem;
+    min-height: 0;
+}
+#chat-logs::-webkit-scrollbar { width: 6px; }
+#chat-logs::-webkit-scrollbar-track { background: transparent; }
+#chat-logs::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 3px; }
+#chat-logs::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
+
+/* --- FIX: Changed message layout to be vertical (column) for full-width text. --- */
+.message {
+    display: flex;
+    flex-direction: column; /* Stack avatar and content vertically */
+    gap: 8px; /* Space between avatar and text bubble */
+    max-width: 100%; /* Allow messages to take full width */
+    position: relative;
+}
+
+.message .avatar {
+    width: 32px; height: 32px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+.bot-message { align-items: flex-start; /* Align entire bot message block to the left */ }
+.bot-message .avatar { background-color: var(--chat-primary-color); color: white; }
+
+.user-message { align-items: flex-end; /* Align entire user message block to the right */ }
+.user-message .avatar { background-color: var(--chat-bubble-user-bg); }
+
+/* --- FIX: Adjusted line-height and font-size for better readability. --- */
+.message .message-content {
+    padding: 12px 16px;
+    border-radius: var(--chat-border-radius-md);
+    line-height: 1.5; /* Reduced from 1.6 */
+    font-size: 0.65rem; /* Slightly smaller font */
+    word-wrap: break-word;
+    width: 100%;
+}
+
+/* --- FIX: Control paragraph spacing directly. --- */
+.message .message-content br {
+    display: block; /* Make the <br> a block element */
+    content: ""; /* Required for margin to apply */
+    margin-top: 12px; /* This is the new space between paragraphs */
+}
+
+/* --- FIX: User message bubble styling is simplified now. --- */
+.user-message .message-content {
+    background-color: var(--chat-primary-color);
+    color: white;
+}
+
+.bot-message .message-content {
+    background-color: var(--chat-bubble-bot-bg);
+    color: var(--chat-font-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.typing-indicator span {
+    height: 8px; width: 8px; background-color: #9E9EA1; border-radius: 50%;
+    display: inline-block; animation: bounce 1.4s infinite ease-in-out both;
+}
+.typing-indicator span:nth-of-type(1) { animation-delay: -0.32s; }
+.typing-indicator span:nth-of-type(2) { animation-delay: -0.16s; }
+.typing-indicator span:nth-of-type(3) { animation-delay: 0s; }
+@keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
+
+/* --- Code Blocks --- */
+.bot-message pre {
+    margin: 10px 0 0 0; border-radius: 8px; position: relative;
+    white-space: pre-wrap; word-break: break-word;
+}
+.bot-message pre code.hljs { padding: 1rem; font-size: 0.9em; border-radius: 8px; }
+.copy-code-btn {
+    position: absolute; top: 8px; right: 8px; background-color: rgba(255,255,255,0.1);
+    color: white; border: none; padding: 4px 8px; border-radius: 6px;
+    cursor: pointer; font-size: 0.8em; opacity: 0.7; transition: all 0.2s;
+    display: flex; align-items: center; gap: 4px;
+}
+.copy-code-btn:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
+
+/* --- Input Area --- */
+.chat-input-area {
+    padding: 1rem 1.25rem; border-top: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.5); flex-shrink: 0;
+}
+#suggestion-chips { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.chip {
+    background-color: rgba(255,255,255,0.8); border: 1px solid rgba(0,0,0,0.1);
+    color: var(--chat-primary-color); padding: 6px 12px; border-radius: 9999px;
+    font-size: 0.85em; cursor: pointer; transition: all 0.2s;
+}
+.chip:hover { background-color: white; border-color: var(--chat-primary-color); }
+.input-wrapper {
+    display: flex; align-items: flex-end; gap: 10px; background-color: white;
+    border-radius: var(--chat-border-radius-md); padding: 8px 12px;
+    border: 1px solid rgba(0,0,0,0.1); transition: border-color 0.2s;
+}
+.input-wrapper:focus-within { border-color: var(--chat-primary-color); }
+#chat-input {
+    flex-grow: 1; border: none; outline: none; background: none; resize: none;
+    font-family: 'Inter', sans-serif; font-size: 1rem; max-height: 100px;
+    line-height: 1.5; overflow-y: auto; color: var(--chat-font-color);
+}
+#chat-input::placeholder { color: #999; }
+#chat-send-btn {
+    background-color: var(--chat-primary-color); border: none; border-radius: 10px;
+    width: 36px; height: 36px; display: flex; align-items: center;
+    justify-content: center; cursor: pointer; color: white;
+    flex-shrink: 0; transition: background-color 0.2s;
+}
+#chat-send-btn:hover { background-color: var(--chat-primary-light); }
+#chat-send-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+</style>
+
+<!-- ======================================================= -->
+<!-- ============= CHATBOT COMPONENT START =============== -->
+<!-- ======================================================= -->
+<button id="hive-launcher"><i data-lucide="message-circle"></i><span class="launcher-text">Ask Hive</span></button>
+<div id="hive-chatbox" style="display: none;">
+    <div class="chat-header">
+        <h3>Hive Chat</h3>
+        <div class="header-buttons">
+            <button id="chat-clear-btn" class="header-btn" title="Clear Chat"><i data-lucide="trash-2"></i></button>
+            <button id="chat-close-btn" class="header-btn" title="Close Chat"><i data-lucide="x"></i></button>
+        </div>
+    </div>
+    <div id="chat-logs"></div>
+    <div class="chat-input-area">
+        <div id="suggestion-chips"></div>
+        <div class="input-wrapper">
+            <textarea id="chat-input" placeholder="Ask anything..." rows="1"></textarea>
+            <button id="chat-send-btn"><i data-lucide="arrow-up"></i></button>
+        </div>
+    </div>
+</div>
+<!-- ======================================================= -->
+<!-- ============== CHATBOT COMPONENT END ================ -->
+<!-- ======================================================= -->
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- SECTION 1: CONSTANTS AND STATE MANAGEMENT ---
+    const geminiHexApiKey = "41497a61537941467a37366d424e315a667a6d3754667068543151634c4d2d4c70706443763745";
+    const decodedApiKey = hexDecode(geminiHexApiKey);
+    const custom_instruction = `
+I am Hive Chat, an AI assistant created by CollegeHive, a platform providing notes founded by Sanjay Bandaru, Aman Thoyaj, and other students from Christ University. I help users with their queries, maintaining a professional, polite, and respectful demeanor.
+(Mention only if needed about collegehive)
+Here's what you can expect from me:
+I will provide proper explanations and clear understanding of topic to help you fully understand concepts but with brevity and concise.
+I will not respond to inappropriate, offensive, or unethical content. If necessary, I will disengage politely.
+I won't give output in markdown syntax means (*,#) wont be in output , output will contain \n if necessary.
+Any Output will be less than 500 words
+VERY IMPORTANT POINTS TO REMEMBER:
+[[[[[if USER Didnt ask about explanation ,then give response in one sentence and dont give any explanation.]]]]]
+CollegeHive is the Student Community Platform where it multiple Services which students needs. Under Collegehive : Hive Notes and Forum are Operating now.
+Hive Notes is a notes-providing platform where students can access these notes to prepare for semester exams. offers quality and concise notes for BBA students, prepared by a dedicated team based on the Program Course Plan.
+I am here to provide helpful information briefly and concisely, adhering to the platform's standards and a respectful, ethical approach.`;
+    let conversationHistory = [];
+    const uiState = { isOpen: false, isLoading: false };
+    const initialSuggestions = ["Give a simple example for this", "Explain it in simple terms"];
+
+    // --- SECTION 2: ELEMENT SELECTORS ---
+    const launcher = document.getElementById('hive-launcher');
+    const chatbox = document.getElementById('hive-chatbox');
+    const closeBtn = document.getElementById('chat-close-btn');
+    const clearBtn = document.getElementById('chat-clear-btn');
+    const chatLogs = document.getElementById('chat-logs');
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('chat-send-btn');
+    const suggestionChipsContainer = document.getElementById('suggestion-chips');
+    const article = document.querySelector('article.md-content__inner.md-typeset');
+
+    // --- SECTION 3: CORE HELPER FUNCTIONS ---
+    function hexDecode(hexString) {
+        let decodedString = '';
+        for (let i = 0; i < hexString.length; i += 2) {
+            decodedString += String.fromCharCode(parseInt(hexString.substring(i, i + 2), 16));
+        }
+        return decodedString;
+    }
+    const sanitizeHTML = (str) => {
+        const temp = document.createElement('div');
+        temp.textContent = str;
+        return temp.innerHTML;
+    };
+
+    // --- SECTION 4: PAGE CONTENT SCRAPING ---
+
+    const pageContentDiv = document.querySelector('div.page-content.clearfix');
+    let getPageContent = '';
+    if (pageContentDiv) {
+        getPageContent = pageContentDiv.innerText;
+        console.log('Captured Page Content (hidden):', getPageContent);
+    }
+
+    // --- SECTION 5: UI & DOM MANIPULATION ---
+    const toggleChatbox = () => {
+        uiState.isOpen = !uiState.isOpen;
+        if (uiState.isOpen) {
+            launcher.style.display = 'none';
+            chatbox.style.display = 'flex';
+            gsap.to(chatbox, { scale: 1, opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' });
+            chatInput.focus();
+        } else {
+            gsap.to(chatbox, { scale: 0.95, opacity: 0, y: 10, duration: 0.3, ease: 'power3.in', onComplete: () => {
+                chatbox.style.display = 'none';
+                launcher.style.display = 'flex';
+            }});
+        }
+    };
+    
+    const scrollToBottom = () => { chatLogs.scrollTop = chatLogs.scrollHeight; };
+    
+    // --- FIX: This function now correctly creates the vertical message structure. ---
+    const appendMessage = (type, content) => {
+        const messageEl = document.createElement('div');
+        messageEl.className = `message ${type}-message`;
+        
+        const avatarIconName = (type === 'bot') ? 'bot' : 'user-2';
+        
+        // The structure is now simpler: just the avatar and the content bubble.
+        // The CSS handles the rest.
+        messageEl.innerHTML = `
+            <div class="avatar"><i data-lucide="${avatarIconName}"></i></div>
+            <div class="message-content">${content}</div>
+        `;
+        
+        chatLogs.appendChild(messageEl);
+        lucide.createIcons();
+        scrollToBottom();
+        return messageEl;
+    };
+    
+    const showTypingIndicator = () => {
+        const typingEl = document.createElement('div');
+        typingEl.id = 'typing-indicator';
+        typingEl.className = 'message bot-message'; // It's a bot message
+        typingEl.innerHTML = `
+            <div class="avatar"><i data-lucide="bot"></i></div>
+            <div class="message-content typing-indicator"><span></span><span></span><span></span></div>
+        `;
+        chatLogs.appendChild(typingEl);
+        lucide.createIcons();
+        scrollToBottom();
+    };
+
+    const hideTypingIndicator = () => {
+        const indicator = document.getElementById('typing-indicator');
+        if (indicator) indicator.remove();
+    };
+    
+    const renderMessageContent = (element, text) => {
+        const codeBlockRegex = /```(\w*)\n([\s\S]*?)```/g;
+        let processedText = text.replace(codeBlockRegex, (match, lang, code) => {
+            const sanitizedCode = sanitizeHTML(code);
+            return `<pre><code class="language-${lang || 'plaintext'}">${sanitizedCode}</code></pre>`;
+        });
+        processedText = processedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        processedText = processedText.replace(/\n+/g, '<br>');
+        element.innerHTML = processedText;
+        element.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+            const pre = block.parentElement;
+            if (pre.querySelector('.copy-code-btn')) return;
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-code-btn';
+            copyBtn.innerHTML = `<i data-lucide="copy"></i><span>Copy</span>`;
+            pre.appendChild(copyBtn);
+        });
+        lucide.createIcons();
+        scrollToBottom();
+    };
+    
+    const renderSuggestions = () => {
+        suggestionChipsContainer.style.display = 'flex';
+        suggestionChipsContainer.innerHTML = '';
+        initialSuggestions.forEach(text => {
+            const chip = document.createElement('div');
+            chip.className = 'chip';
+            chip.innerText = text;
+            suggestionChipsContainer.appendChild(chip);
+        });
+    };
+    const hideSuggestions = () => {
+        suggestionChipsContainer.style.display = 'none';
+    };
+
+    // --- SECTION 6: API COMMUNICATION ---
+    const sendMessageToGemini = (message) => {
+        conversationHistory.push({ "role": "user", "content": message });
+        const geminiContents = [];
+        let systemInstructionText = conversationHistory.find(m => m.role === "system")?.content || "";
+        const historyForApi = conversationHistory.filter(m => m.role !== "system");
+        historyForApi.forEach((item, index) => {
+            const role = item.role === "assistant" ? "model" : "user";
+            let textContent = item.content;
+            if (index === 0 && systemInstructionText) {
+                textContent = systemInstructionText + "\n\n" + textContent;
+            }
+            geminiContents.push({ "role": role, "parts": [{ "text": textContent }] });
+        });
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${decodedApiKey}`;
+        const requestBody = { "contents": geminiContents, "generationConfig": { "temperature": 0.7, "maxOutputTokens": 1500, "topP": 0.5 } };
+        $.ajax({
+            url: apiUrl,
+            type: "POST",
+            headers: { "Content-Type": "application/json" },
+            data: JSON.stringify(requestBody),
+            success: function(response) {
+                hideTypingIndicator();
+                const geminiResponse = response.candidates[0]?.content?.parts[0]?.text || "I'm sorry, I couldn't get a response.";
+                conversationHistory.push({ "role": "assistant", "content": geminiResponse });
+                const botMessageEl = appendMessage('bot', '');
+                const botContentEl = botMessageEl.querySelector('.message-content');
+                renderMessageContent(botContentEl, geminiResponse);
+            },
+            error: function(xhr) {
+                console.error("Gemini API Error:", xhr.responseText);
+                hideTypingIndicator();
+                appendMessage('bot', 'I apologize, but I\'m having trouble connecting right now.');
+            },
+            complete: function() {
+                uiState.isLoading = false;
+                sendBtn.disabled = false;
+                chatInput.focus();
+            }
+        });
+    };
+
+    // --- SECTION 7: CORE LOGIC & EVENT HANDLERS ---
+    const handleSendMessage = () => {
+        const messageText = chatInput.value.trim();
+        if (!messageText || uiState.isLoading) return;
+        appendMessage('user', sanitizeHTML(messageText));
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+        uiState.isLoading = true;
+        sendBtn.disabled = true;
+        hideSuggestions();
+        showTypingIndicator();
+        sendMessageToGemini(messageText);
+    };
+
+    const resetChat = () => {
+        chatLogs.innerHTML = '';
+        initializeHistoryAndChat();
+        console.log("Chat history has been cleared and reset.");
+    };
+
+    const initializeHistoryAndChat = () => {
+        conversationHistory = [
+            { "role": "system", "content": custom_instruction },
+            { "role": "user", "content": "This is the current page content. " + getPageContent}
+        ];
+        appendMessage('bot', 'Hi! I\'m Hive Chat, an AI assistant. How can I help you today?');
+        renderSuggestions();
+    };
+
+    // --- 8. EVENT LISTENER BINDINGS ---
+    launcher.addEventListener('click', toggleChatbox);
+    closeBtn.addEventListener('click', toggleChatbox);
+    clearBtn.addEventListener('click', resetChat);
+    sendBtn.addEventListener('click', handleSendMessage);
+    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } });
+    chatInput.addEventListener('input', () => { chatInput.style.height = 'auto'; chatInput.style.height = `${chatInput.scrollHeight}px`; });
+    document.body.addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip');
+        if (chip) {
+            chatInput.value = chip.innerText;
+            handleSendMessage();
+            return;
+        }
+        const copyBtn = e.target.closest('.copy-code-btn');
+        if (copyBtn) {
+            const pre = copyBtn.parentElement;
+            const code = pre.querySelector('code');
+            navigator.clipboard.writeText(code.innerText).then(() => {
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = `<i data-lucide="check"></i><span>Copied!</span>`;
+                lucide.createIcons();
+                setTimeout(() => { copyBtn.innerHTML = originalText; lucide.createIcons(); }, 2000);
+            });
+        }
+    });
+
+    // --- 9. INITIALIZATION & THEME SYNC ---
+    const themeObserver = new MutationObserver(() => {});
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-md-color-scheme'] });
+    lucide.createIcons();
+    initializeHistoryAndChat();
+});
+</script>
+
