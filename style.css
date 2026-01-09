@@ -1,305 +1,1020 @@
-/* Modernized UI & Colors */
+/* ============================================
+   BOOKSTACK CUSTOM THEME - PROFESSIONAL & CLEAN
+   ============================================ */
+
+/* ============================================
+   1. CSS VARIABLES / DESIGN TOKENS
+   ============================================ */
 :root {
-  --primary-color: #3498db;
-  --secondary-color: #2ecc71;
-  --dark-bg: #121212;
-  --light-bg: #f9f9f9;
-  --dark-text: #333;
-  --light-text: #f5f5f5;
-  --card-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  --transition: all 0.3s ease;
+  /* Primary Colors */
+  --primary-color: #2563eb;
+  --primary-hover: #1d4ed8;
+  --secondary-color: #10b981;
+  --secondary-hover: #059669;
+  
+  /* Neutral Colors */
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  
+  /* Background Colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  
+  /* Text Colors */
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Charter', 'Georgia', 'Cambria', serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  
+  /* Line Heights */
+  --leading-tight: 1.4;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+  
+  /* Spacing */
+  --content-max-width: 75ch;
 }
 
-/* General improvements */
+/* ============================================
+   2. FONT IMPORTS
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ============================================
+   3. BASE STYLES & RESET
+   ============================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--bg-primary);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 body {
-  font-family: 'Inter', sans-serif;
-  transition: var(--transition);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+  transition: background-color var(--transition-base), color var(--transition-base);
 }
 
-/* Enhanced buttons */
+/* ============================================
+   4. TYPOGRAPHY - HEADINGS
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text-primary);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 700;
+  margin-top: 0;
+  letter-spacing: -0.03em;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+h3 {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+}
+
+h4 {
+  font-size: clamp(1.1rem, 2.5vw, 1.25rem);
+}
+
+h5 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+h6 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   5. TYPOGRAPHY - BODY TEXT
+   ============================================ */
+p {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: var(--leading-relaxed);
+  color: var(--text-primary);
+  margin-bottom: 1.25em;
+  max-width: var(--content-max-width);
+}
+
+/* Lead paragraph */
+p.lead, .page-content > p:first-of-type {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+/* Small text */
+small, .text-small {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Strong & Emphasis */
+strong, b {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+em, i {
+  font-style: italic;
+}
+
+/* Links */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ============================================
+   6. LISTS
+   ============================================ */
+ul, ol {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: var(--leading-relaxed);
+  margin-bottom: 1.25em;
+  padding-left: 1.5em;
+  max-width: var(--content-max-width);
+}
+
+li {
+  font-size: inherit;
+  margin-bottom: 0.5em;
+  padding-left: 0.25em;
+}
+
+li::marker {
+  color: var(--primary-color);
+}
+
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Task lists */
+ul.contains-task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.task-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.task-list-item input[type="checkbox"] {
+  margin-top: 0.35em;
+  accent-color: var(--primary-color);
+}
+
+/* ============================================
+   7. BLOCKQUOTES
+   ============================================ */
+blockquote {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-style: italic;
+  color: var(--text-secondary);
+  border-left: 4px solid var(--primary-color);
+  margin: 1.5em 0;
+  padding: 1em 1.5em;
+  background: linear-gradient(135deg, var(--gray-50) 0%, var(--bg-primary) 100%);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  position: relative;
+}
+
+blockquote::before {
+  content: '"';
+  font-size: 4rem;
+  font-family: Georgia, serif;
+  color: var(--gray-200);
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  line-height: 1;
+}
+
+blockquote p {
+  margin-bottom: 0.5em;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+blockquote cite {
+  display: block;
+  font-size: 0.9rem;
+  font-style: normal;
+  color: var(--text-muted);
+  margin-top: 0.75em;
+}
+
+blockquote cite::before {
+  content: '— ';
+}
+
+/* ============================================
+   8. CODE & PREFORMATTED TEXT
+   ============================================ */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background-color: var(--gray-100);
+  color: #e11d48;
+  padding: 0.2em 0.4em;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gray-200);
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  background-color: var(--gray-900);
+  color: #e2e8f0;
+  padding: 1.25em 1.5em;
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+  margin: 1.5em 0;
+  border: 1px solid var(--gray-800);
+  box-shadow: var(--shadow-md);
+}
+
+pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  border: none;
+  font-size: inherit;
+}
+
+/* Scrollbar for code blocks */
+pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+pre::-webkit-scrollbar-track {
+  background: var(--gray-800);
+  border-radius: var(--radius-full);
+}
+
+pre::-webkit-scrollbar-thumb {
+  background: var(--gray-600);
+  border-radius: var(--radius-full);
+}
+
+pre::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-500);
+}
+
+/* ============================================
+   9. TABLES
+   ============================================ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 0.95rem;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+thead {
+  background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-50) 100%);
+}
+
+th {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-align: left;
+  padding: 1em 1.25em;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--gray-200);
+}
+
+td {
+  font-family: var(--font-serif);
+  padding: 0.875em 1.25em;
+  border-bottom: 1px solid var(--gray-100);
+  color: var(--text-primary);
+}
+
+tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+tbody tr:hover {
+  background-color: var(--gray-50);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============================================
+   10. HORIZONTAL RULE
+   ============================================ */
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gray-300), transparent);
+  margin: 2.5em 0;
+}
+
+/* ============================================
+   11. IMAGES & FIGURES
+   ============================================ */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+figure {
+  margin: 2em 0;
+}
+
+figure img {
+  box-shadow: var(--shadow-md);
+}
+
+figure img:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+
+figcaption {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 0.75em;
+  font-style: italic;
+}
+
+/* ============================================
+   12. BUTTONS
+   ============================================ */
 button {
-  border-radius: 8px;
-  padding: 8px 16px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
   font-weight: 500;
-  transition: var(--transition);
+  border-radius: var(--radius-md);
+  padding: 0.625em 1.25em;
   border: none;
   cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
 }
 
-/* Modern card styling */
+button:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Primary Button */
+.btn-primary, button[type="submit"] {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover, button[type="submit"]:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background-color: var(--gray-100);
+  color: var(--text-primary);
+  border: 1px solid var(--gray-200);
+}
+
+.btn-secondary:hover {
+  background-color: var(--gray-200);
+}
+
+/* ============================================
+   13. CARDS
+   ============================================ */
 .card {
-  border-radius: 12px;
-  box-shadow: var(--card-shadow);
-  transition: var(--transition);
+  background-color: var(--bg-primary);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+  overflow: hidden;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--gray-300);
 }
 
-/* Dark mode enhancements */
-html.dark-mode .card {
-  background-color: #1e1e1e !important;
-  border: 1px solid #333;
+.grid-card {
+  border-radius: var(--radius-lg);
 }
 
-/* Reader*/
- .highlight {
-            background-color: yellow;
-        }
-        .clickable {
-            cursor: pointer;
-        }
-        .tts-controls {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: #f8f9fa;
-            border-top: 1px solid #ddd;
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-        .tts-controls button {
-            margin: 0 10px;
-            padding: 4px 8px;
-            border: none;
-            border-radius: 30px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .tts-controls button:hover {
-            background-color: #0056b3;
-        }
-        .tts-controls label {
-            margin: 0 10px;
-            color: #333;
-        }
-        .tts-controls input[type="range"] {
-            width: 150px;
-        }
+/* ============================================
+   14. TTS READER CONTROLS
+   ============================================ */
+.highlight {
+  background: linear-gradient(120deg, #fef08a 0%, #fde047 100%);
+  padding: 0.1em 0.2em;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
 
-/* ai summmary */
+.clickable {
+  cursor: pointer;
+}
+
+.tts-controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.98) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--gray-200);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+}
+
+.tts-controls button {
+  margin: 0;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.tts-controls button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.tts-controls button:active {
+  transform: translateY(0);
+}
+
+.tts-controls label {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.tts-controls input[type="range"] {
+  width: 120px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--gray-200);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.tts-controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.tts-controls input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   15. AI SUMMARY OVERLAY
+   ============================================ */
+.info-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 0.75rem;
+  border: none;
+  background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-50) 100%);
+  color: var(--text-primary);
+  font-size: 1rem;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  animation: gentlePulse 2s infinite ease-in-out;
+}
+
+.info-button:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+}
+
+.info-button:hover img {
+  filter: brightness(0) invert(1);
+}
+
+@keyframes gentlePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: var(--shadow-sm);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+/* Overlay Container */
+.overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  background: var(--bg-primary);
+  padding: 0;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  width: 90%;
+  max-width: 600px;
+  height: auto;
+  max-height: 80vh;
+  display: none;
+  opacity: 0;
+  transition: all var(--transition-base);
+  z-index: 9999;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+}
+
+.overlay.show {
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Overlay Header */
+.overlay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, var(--gray-50) 0%, var(--bg-primary) 100%);
+  border-bottom: 1px solid var(--gray-200);
+  flex-shrink: 0;
+}
+
+.overlay-header strong {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.overlay-header .avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+}
+
+/* Overlay Buttons */
+.close-button, .copy-button {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  background-color: var(--gray-800);
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  margin-left: 0.5rem;
+  transition: all var(--transition-fast);
+}
+
+.close-button:hover {
+  background-color: #dc2626;
+}
+
+.copy-button:hover {
+  background-color: var(--secondary-color);
+}
+
+/* Markdown Content Area */
+.markdown-content {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex-grow: 1;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  line-height: var(--leading-relaxed);
+  color: var(--text-primary);
+}
+
+/* Markdown Content Scrollbar */
+.markdown-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.markdown-content::-webkit-scrollbar-track {
+  background: var(--gray-100);
+  border-radius: var(--radius-full);
+}
+
+.markdown-content::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: var(--radius-full);
+}
+
+.markdown-content::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
+}
+
+/* Markdown Elements Spacing */
 .markdown-content p,
 .markdown-content h1,
 .markdown-content h2,
 .markdown-content h3,
 .markdown-content h4,
 .markdown-content h5,
-.markdown-content h6,
+.markdown-content h6 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.markdown-content p:first-child,
+.markdown-content h1:first-child,
+.markdown-content h2:first-child,
+.markdown-content h3:first-child {
+  margin-top: 0;
+}
+
 .markdown-content ul,
-.markdown-content ol,
-.markdown-content li,
-.markdown-content blockquote,
-.markdown-content pre {
-    margin-bottom: 0.5em !important; /* Adjust as needed for desired spacing */
-    margin-top: 0.5em !important;    /* Adjust as needed for desired spacing */
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
+.markdown-content ol {
+  margin: 0.75em 0;
+  padding-left: 1.5em;
 }
 
-/* If you want less space between list items: */
 .markdown-content li {
-    margin-bottom: 0.2em !important; /* Example: less spacing for list items */
+  margin-bottom: 0.375em;
+  font-size: 1rem;
 }
 
+.markdown-content blockquote {
+  margin: 1em 0;
+  padding: 0.75em 1em;
+  font-size: 0.95rem;
+}
+
+.markdown-content pre {
+  margin: 1em 0;
+  padding: 1em;
+  font-size: 0.85rem;
+}
+
+.markdown-content code {
+  font-size: 0.85em;
+}
+
+/* ============================================
+   16. DARK MODE
+   ============================================ */
+html.dark-mode {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #111111;
+  --bg-tertiary: #1a1a1a;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --gray-50: #1a1a1a;
+  --gray-100: #262626;
+  --gray-200: #333333;
+  --gray-300: #404040;
+  --gray-800: #1e1e1e;
+  --gray-900: #0a0a0a;
+}
+
+html.dark-mode body {
+  background-color: var(--bg-primary);
+}
+
+html.dark-mode h1,
+html.dark-mode h2,
+html.dark-mode h3,
+html.dark-mode h4,
+html.dark-mode h5,
+html.dark-mode h6,
+html.dark-mode p,
+html.dark-mode li {
+  color: var(--text-primary);
+}
+
+html.dark-mode h2 {
+  border-bottom-color: var(--gray-200);
+}
+
+html.dark-mode a {
+  color: #60a5fa;
+}
+
+html.dark-mode a:hover {
+  color: #93c5fd;
+}
+
+html.dark-mode code {
+  background-color: var(--gray-100);
+  border-color: var(--gray-200);
+  color: #f472b6;
+}
+
+html.dark-mode blockquote {
+  background: linear-gradient(135deg, var(--gray-100) 0%, var(--bg-primary) 100%);
+  border-left-color: var(--primary-color);
+}
+
+html.dark-mode blockquote::before {
+  color: var(--gray-300);
+}
+
+html.dark-mode table {
+  box-shadow: none;
+  border: 1px solid var(--gray-200);
+}
+
+html.dark-mode thead {
+  background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-50) 100%);
+}
+
+html.dark-mode th {
+  border-bottom-color: var(--gray-200);
+}
+
+html.dark-mode td {
+  border-bottom-color: var(--gray-100);
+}
+
+html.dark-mode tbody tr:hover {
+  background-color: var(--gray-100);
+}
+
+html.dark-mode hr {
+  background: linear-gradient(90deg, transparent, var(--gray-300), transparent);
+}
+
+html.dark-mode .card {
+  background-color: var(--bg-secondary);
+  border-color: var(--gray-200);
+}
+
+html.dark-mode .card:hover {
+  border-color: var(--gray-300);
+}
+
+html.dark-mode .highlight {
+  background: linear-gradient(120deg, #854d0e 0%, #a16207 100%);
+  color: #fef08a;
+}
+
+html.dark-mode .tts-controls {
+  background: linear-gradient(180deg, rgba(10,10,10,0.95) 0%, rgba(17,17,17,0.98) 100%);
+  border-top-color: var(--gray-200);
+}
+
+html.dark-mode .tts-controls label {
+  color: var(--text-secondary);
+}
+
+html.dark-mode .tts-controls input[type="range"] {
+  background: var(--gray-200);
+}
+
+html.dark-mode .info-button {
+  background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+  color: var(--text-primary);
+}
+
+html.dark-mode .overlay {
+  background: var(--bg-primary);
+  border-color: var(--gray-200);
+}
+
+html.dark-mode .overlay-header {
+  background: linear-gradient(135deg, var(--gray-100) 0%, var(--bg-primary) 100%);
+  border-bottom-color: var(--gray-200);
+}
+
+html.dark-mode .markdown-content {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+html.dark-mode .markdown-content::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+
+html.dark-mode .markdown-content::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+}
+
+/* ============================================
+   17. SELECTION STYLES
+   ============================================ */
+::selection {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+html.dark-mode ::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* ============================================
+   18. FOCUS STATES (Accessibility)
+   ============================================ */
+:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   19. PRINT STYLES
+   ============================================ */
+@media print {
+  .tts-controls,
+  .info-button,
+  .overlay {
+    display: none !important;
+  }
   
- .dark-mode .markdown-content 
-  {
-  background-color: #000;
-}
-   .dark-mode .overlay-header{
-     background-color: #000; 
-   }
- .dark-mode .overlay{
-     background-color: #000; 
-       border: 1px solid #ffffff;
-   }
-  @keyframes scaleAnimation {
-  0% {
-    transform: scale(1);
+  body {
+    font-size: 12pt;
+    color: black;
+    background: white;
   }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
   
-    /* We'll apply styles to .info-button once it is created */
-    .info-button {
-      display: inline-block;
-      cursor: pointer;
-      margin-left: 0.5rem;
-      border: none;
-      background: none;
-      color: #111;
-      font-size: 1.2rem;
-      line-height: 1;
-      transition: transform 0.2s ease;
-      animation: scaleAnimation 1s infinite ease-in-out;
-    }
-
-    .info-button:hover {
-      transform: scale(1.3);
-    }
-
-    .content {
-      margin-top: 1rem;
-      line-height: 1.5;
-    }
-
-    /* Overlay styling */
-    .overlay {
-      position: fixed; 
-      top: 80px; /* offset from top */
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #fff;
-      /* color: #fff; */
-      padding: 1rem;
-      border: 1px solid #111;
-      border-radius: 5px;
-      width: 80%;
-      max-width: 500px;
-      display: none;
-      box-sizing: border-box;
-      opacity: 0;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      z-index: 9999;
-
-       /* Add these two lines */
-      height: 75vh;       /* 75% of the viewport height */
-      overflow-y: auto;   /* Scrollbar if content exceeds 75vh */
-    }
-
-    .overlay.show {
-      display: block;
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-
-    .overlay-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.5rem;
-    }
-
-    .close-button, .copy-button {
-      background-color: #333;
-      border: 1px solid #111;
-      color: #fff;
-      cursor: pointer;
-      padding: 0.3rem 0.6rem;
-      border-radius: 4px;
-      margin-left: 0.5rem;
-      transition: background-color 0.2s ease;
-    }
-
-    .close-button:hover,
-    .copy-button:hover {
-      background-color: #444;
-    }
-
-    /* .markdown-content {
-      margin-top: 1rem;
-      white-space: pre-wrap;
-    }
- */
-    /* Simple animation for fade in */
-    .fade-in {
-      animation: fadeIn 0.3s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-
-/* 
-website fonts */
-     @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap'); 
-
-  /* General Typography */
-  h1, h2, h3, h4, li, p {
-      /* font-family: 'Comic Neue', sans-serif; */
-         font-family: "Charter", serif;
-      color: #292929; /* Default text color for better visibility */
+  h1, h2, h3, h4, h5, h6 {
+    color: black;
+    page-break-after: avoid;
   }
+  
+  pre, blockquote {
+    page-break-inside: avoid;
+  }
+}
+
+/* ============================================
+   20. RESPONSIVE ADJUSTMENTS
+   ============================================ */
+@media (max-width: 768px) {
   h1 {
-      font-weight: 300; /* Light font weight for h1 */
-      font-size: 3.5em; /* Adjust size for h1 */
+    font-size: 1.875rem;
   }
   
   h2 {
-      font-weight: 200;
-      font-size: 2em; /* Example size for h2 */
+    font-size: 1.5rem;
   }
   
   h3 {
-      font-size: 1.75em; /* Example size for h3 */
+    font-size: 1.25rem;
   }
   
-  h4 {
-      font-size: 1.6em; /* Example size for h4 */
+  p, li {
+    font-size: 1rem;
   }
   
-  /* Ensure list font sizes remain consistent */
-  ul, ol {
-      font-size: 1em; /* Explicit font-size for list parent */
+  .overlay {
+    width: 95%;
+    max-height: 85vh;
   }
   
-  li {
-      font-size: 1.3rem; /* Use rem for consistent sizing relative to root */
+  .tts-controls {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 15px;
   }
   
-  p {
-      font-size: 1.5em; /* Example size for p */
-      line-height: 1.5; /* Improves readability */
+  .tts-controls input[type="range"] {
+    width: 100px;
   }
- 
+}
 
- 
+/* ============================================
+   21. SMOOTH PAGE TRANSITIONS
+   ============================================ */
+.page-content {
+  animation: fadeInUp 0.4s ease-out;
+}
 
-    /* General Dark Mode and Light Mode Colors */
-    html.dark-mode body, 
-    html.dark-mode h1, 
-    html.dark-mode h2, 
-    html.dark-mode h3, 
-    html.dark-mode h4, 
-    html.dark-mode li, 
-    html.dark-mode p {
-        font-family: "Charter", serif;
-        color: #FFFFFF !important; /* Light text for dark mode */
-    }
-    
-    
-      /* Default light mode (not dark) */
-
-    html{
-         background-color: #FFFFFF !important;
-    }
-    html.dark-mode{
-        background-color: #0a0a0a !important; /* Black background for dark mode */
-    }
-    .card {
-        background-color: #ffffff; /* Light gray background for light mode */
-    }
-
-    html.dark-mode .card {
-        background-color: #000 !important; /* Black background for dark mode */
-    }
-
-    html.dark-mode .grid-card {
-        border-color: #888 !important; /* Subtle border for cards in dark mode */
-    }
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
